@@ -1,0 +1,184 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instructor - EduPresence | Next-Gen Learning</title>
+
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+
+    <style>
+      .content {
+        scrollbar-width: thin;
+        scrollbar-color: #888 #f1f1f1;
+      }
+    </style>
+  </head>
+  <body>
+    <main style="position: relative">
+      <nav class="main-menu">
+        <h1
+          style="
+            margin: 10px 0 10px;
+            line-height: 64px;
+            align-items: center;
+            margin: 10px 0;
+            max-width: 100%;
+            font-size: 1.5rem;
+          "
+        >
+          <img
+            src="{{ url_for('static', filename='logo_full.png') }}"
+            alt="E"
+            style="height: 6em; width: auto; vertical-align: middle"
+          />
+        </h1>
+
+        <div class="logo">
+          <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            alt="EduPresence Logo"
+            height="40"
+          />
+        </div>
+        <ul>
+          <li class="nav-item active">
+            <b></b>
+            <b></b>
+            <a href="#dashboard" id="dashboard">
+              <i class="fa fa-house nav-icon"></i>
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#manage-classes" id="manage-classes">
+              <i class="fa fa-user-pen nav-icon"></i>
+              <span class="nav-text">Manage Classes</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#attendance" id="attendance">
+              <i class="fa fa-check-circle nav-icon"></i>
+              <span class="nav-text">Attendance</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#live-classes" id="live-classes">
+              <i class="fa fa-bullhorn nav-icon"></i>
+              <span class="nav-text">Live Classes</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#create-live-class" id="create-live-class">
+              <i class="fa fa-question-circle nav-icon"></i>
+              <span class="nav-text">Create Live Class</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#logout" id="logout">
+              <i class="fa fa-right-from-bracket nav-icon"></i>
+              <span class="nav-text">Log Out</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="loading-indicator"></div>
+      <section class="content" id="content"></section>
+    </main>
+
+    <script>
+      $(document).ready(function () {
+        function loadContent(page) {
+          $(".loading-indicator").html("Loading...").show();
+          $("#content").empty().hide();
+
+          $("#content").load(page, function (response, status, xhr) {
+            if (status === "success") {
+              $(".loading-indicator").hide();
+              $("#content").show();
+
+              const contentDoc = $("#content")[0];
+              const header = contentDoc.querySelector("header, .header, #header");
+              if (header) header.remove();
+
+              const footer = contentDoc.querySelector("footer, .footer, #footer");
+              if (footer) footer.remove();
+            } else {
+              console.error("Error loading content:", xhr.status, xhr.statusText);
+              $(".loading-indicator")
+                .html(
+                  "Content not found.<br/><br/><font style='color:red'>(ERROR 404 : <u>" +
+                    page +
+                    "</u>)</font><br/>Please contact the administrator for assistance."
+                )
+                .show();
+
+              $("#content").hide();
+            }
+          });
+        }
+
+        function setActiveTab() {
+          const hash = window.location.hash || "#dashboard";
+          const navItems = $(".nav-item");
+
+          navItems.removeClass("active");
+
+          if (hash === "#logout") {
+            window.location.href = "/logout";
+            return;
+          }
+
+          const activeItem = $(`a[href="${hash}"]`).parent();
+          if (activeItem.length) {
+            activeItem.addClass("active");
+          }
+
+          const pageRoutes = {
+            "#dashboard": "/dashboard/home",
+            "#manage-classes": "/manage-classes",
+            "#attendance": "/attendance",
+
+            "#live-classes": "/instructor/live-classes",
+            "#create-live-class": "/instructor/create-live-class",
+          };
+
+          loadContent(pageRoutes[hash] || "/dashboard/home");
+        }
+
+        setActiveTab();
+
+        $(".nav-item a").click(function (e) {
+          e.preventDefault();
+          const targetHash = $(this).attr("href");
+          history.pushState(null, "", targetHash);
+          setActiveTab();
+        });
+
+        window.addEventListener("hashchange", setActiveTab);
+      });
+    </script>
+  </body>
+</html>

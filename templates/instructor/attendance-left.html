@@ -1,0 +1,274 @@
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='instructor/css/manage-class-cards.css') }}"
+/>
+<h2 style="text-align: center; color: #605ae9; margin-bottom: 20px">Attendance Management</h2>
+
+<!-- Image Upload Section -->
+{% if admin %}
+<div style="text-align: center; margin-bottom: 20px">
+  <h4 style="color: #1a3c5e; font-weight: bold">Upload Student Image</h4>
+  <form
+    id="uploadForm"
+    enctype="multipart/form-data"
+    method="POST"
+    action="{{ url_for('upload_student_image') }}"
+  >
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <label for="studentDropdown" style="color: #1a3c5e">Select Student:</label>
+    <select
+      id="studentDropdown"
+      name="student_id"
+      style="padding: 5px; border-radius: 5px; border: 1px solid #605ae9"
+    >
+      <option value="">-- Select Student --</option>
+      {% for student in students %}
+      <option value="{{ student.id }}">{{ student.name }} ({{ student.username }})</option>
+      {% endfor %}
+    </select>
+    <input type="file" id="imageInput" name="image" accept="image/*" style="margin-top: 10px" />
+    <button
+      type="submit"
+      style="
+        background-color: #605ae9;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 10px;
+      "
+    >
+      Upload Image
+    </button>
+  </form>
+  <div id="imagePreview" style="margin-top: 20px; display: none">
+    <h5 style="color: #1a3c5e">Image Preview:</h5>
+    <img id="previewImg" style="max-width: 200px; border-radius: 5px" />
+  </div>
+</div>
+{% endif %}
+
+<!-- Date Picker -->
+<div style="text-align: center; margin: 20px 0">
+  <label for="datePicker" style="color: #1a3c5e; font-weight: bold">Select Date:</label>
+  <input
+    type="date"
+    id="datePicker"
+    value="2025-03-12"
+    style="padding: 5px; border-radius: 5px; border: 1px solid #605ae9"
+  />
+  <script>
+    // Get the date picker element
+    const datePicker = document.getElementById("datePicker");
+
+    // Function to format the date as YYYY-MM-DD
+    function getTodayDate() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are 0-based, so +1
+      const day = String(today.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    // Set the date picker value to today
+    datePicker.value = getTodayDate();
+  </script>
+</div>
+
+{%if admin%}
+<!-- Batch Dropdown -->
+<div style="text-align: center; margin-bottom: 20px">
+  <label for="batchDropdown" style="color: #1a3c5e; font-weight: bold">Select Batch:</label>
+  <select
+    id="batchDropdown"
+    name="batch_id"
+    style="padding: 5px; border-radius: 5px; border: 1px solid #605ae9"
+  >
+    <option value="">-- Select Batch --</option>
+
+    {% for batch in batches %}
+    <option value="{{ batch[0] }}">{{ batch[1] }}</option>
+    {% endfor %}
+  </select>
+
+  <!-- Course Dropdown -->
+  <label for="courseDropdown" style="margin-left: 15px; color: #1a3c5e; font-weight: bold"
+    >Select Course:</label
+  >
+  <select
+    id="courseDropdown"
+    name="course_id"
+    style="padding: 5px; border-radius: 5px; border: 1px solid #605ae9"
+  >
+    <option value="">-- Select Course --</option>
+    {% for course in courses %}
+    <option value="{{ course[0] }}">{{ course[1] }}</option>
+    {% endfor %}
+  </select>
+</div>
+{%endif%}
+<!-- ... Previous HTML remains the same until the container ... -->
+
+<!-- ... Previous HTML remains the same until the container ... -->
+
+<div class="container">
+  <!-- Left Panel: QR and Face Scanner -->
+  <div id="scannerContainer" class="panel">
+    <div class="panel-header">
+      <h4 class="panel-title">QR & Face Scanner</h4>
+      <button id="startScan" class="action-btn"><i class="fa fa-camera"></i> Start Scanner</button>
+    </div>
+    <div id="scannerArea" class="scrollable">
+      <div id="videoContainer">
+        <video id="video" autoplay style="display: none"></video>
+        <canvas id="canvas" style="display: none"></canvas>
+      </div>
+      <div id="studentList" class="scrollable">
+        <p>Click "Start Scanner" to begin QR code detection.</p>
+        <!-- Students from /get-students will be dynamically loaded here -->
+      </div>
+      <div id="scannerResult" class="centered-text"></div>
+      <div id="verificationInfo" style="display: none">
+        <h5 id="studentName"></h5>
+        <p id="studentEmail"></p>
+        <p id="verificationStatus"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Panel: Manual Attendance -->
+  <div id="coursesContainerWrapper" class="panel">
+    <div class="panel-header">
+      <h4 class="panel-title">Manual Attendance</h4>
+    </div>
+    <div id="coursesContainer" class="scrollable">
+      {% if students %} {% for student in students %}
+      <div class="course-card" data-student="{{ student.id }}">
+        <div class="card-content">
+          <h5 class="student-name">{{ student.name }} ({{student.username}})</h5>
+          <p class="student-email">{{ student.email }}</p>
+        </div>
+        <div class="attendance-options">
+          <button
+            class="present-btn action-btn"
+            data-student="{{ student.id }}"
+            data-status="present"
+            style="
+              background-color: #28a745;
+              color: white;
+              border: none;
+              padding: 7px 12px;
+              font-size: 13px;
+              cursor: pointer;
+              border-radius: 5px;
+            "
+          >
+            <i class="fa fa-check"></i>
+          </button>
+          <button
+            class="absent-btn action-btn"
+            data-student="{{ student.id }}"
+            data-status="absent"
+            style="
+              background-color: #dc3545;
+              color: white;
+              border: none;
+              padding: 7px 12px;
+              font-size: 13px;
+              cursor: pointer;
+              border-radius: 5px;
+            "
+          >
+            <i class="fa fa-times"></i>
+          </button>
+          <br />
+          <button
+            class="show-qr-btn action-btn"
+            data-student-id="{{ student.id }}"
+            data-student-name="{{ student.name }}"
+            style="
+              background-color: #605ae9;
+              color: white;
+              border: none;
+              padding: 10px 15px;
+              font-size: 16px;
+              cursor: pointer;
+              border-radius: 5px;
+              width: 100%;
+              margin-top: 5px;
+            "
+          >
+            <i class="fa fa-qrcode"></i>
+          </button>
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <p class="centered-text">No students available to mark attendance.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div
+  id="qrModal"
+  class="modal"
+  style="
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    text-align: center;
+    z-index: 1000;
+    width: auto;
+    height: auto;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: auto;
+  "
+>
+  <span
+    class="close-btn"
+    style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 20px"
+    >×</span
+  >
+  <h3 id="qrStudentName" style="color: #605ae9"></h3>
+  <div id="qrCodeContainer"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  // Image Preview Functionality
+  document.getElementById("imageInput").addEventListener("change", function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const previewImg = document.getElementById("previewImg");
+        previewImg.src = e.target.result;
+        document.getElementById("imagePreview").style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Close QR Modal
+  document.querySelector(".close-btn").addEventListener("click", function () {
+    document.getElementById("qrModal").style.display = "none";
+  });
+
+  // Optional: Close modal when clicking outside
+  window.addEventListener("click", function (event) {
+    const modal = document.getElementById("qrModal");
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  });
+</script>
+<script src="{{ url_for('static', filename='instructor/js/attendance.js') }}"></script>

@@ -1,0 +1,147 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student - EduPresence | Next-Gen Learning</title>
+
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <main>
+      <nav class="main-menu">
+        <h1
+          style="
+            margin: 10px 0 10px;
+            line-height: 64px;
+            align-items: center;
+            margin: 10px 0;
+            max-width: 100%;
+            font-size: 1.5rem;
+          "
+        >
+          <img
+            src="{{ url_for('static', filename='logo_full.png') }}"
+            alt="E"
+            style="height: 6em; width: auto; vertical-align: middle"
+          />
+        </h1>
+
+        <div class="logo">
+          <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            alt="EduPresence Logo"
+            height="40"
+          />
+        </div>
+        <ul>
+          <li class="nav-item active">
+            <b></b>
+            <b></b>
+            <a href="#dashboard" id="dashboard">
+              <i class="fa fa-house nav-icon"></i>
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#batches" id="batches">
+              <i class="fa fa-users nav-icon"></i>
+              <span class="nav-text">Batches</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#attendance" id="attendance">
+              <i class="fa fa-check-circle nav-icon"></i>
+              <span class="nav-text">Attendance</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#live-classes" id="live-classes">
+              <i class="fa fa-life-ring nav-icon"></i>
+              <span class="nav-text">Live Classes</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#logout" id="logout">
+              <i class="fa fa-sign-out-alt nav-icon"></i>
+              <span class="nav-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <section class="content" id="content"></section>
+    </main>
+
+    <script>
+      $(document).ready(function () {
+        function loadContent(page) {
+          $("#content").load(page);
+        }
+
+        function setActiveTab() {
+          const hash = window.location.hash || "#dashboard";
+          const navItems = $(".nav-item");
+
+          navItems.removeClass("active");
+
+          if (hash === "#logout") {
+            window.location.href = "/logout";
+            return;
+          }
+          const activeItem = $(`a[href="${hash}"]`).parent();
+          if (activeItem.length) {
+            activeItem.addClass("active");
+          }
+
+          const pageRoutes = {
+            "#dashboard": "/dashboard/home",
+            "#batches": "/batches",
+            "#schedules": "/schedules",
+            "#assignments": "/assignments",
+            "#attendance": "/attendance",
+            "#performance": "/performance",
+            "#quizzes": "/quizzes",
+            "#certificates": "/certificates",
+            "#notifications": "/notifications",
+            "#live-sessions": "/live-sessions",
+            "#leaderboard": "/leaderboard",
+            "#bookmarks": "/bookmarks",
+            "#resources": "/resources",
+            "#live-classes": "/student/live-classes",
+            "#settings": "/settings",
+          };
+
+          loadContent(pageRoutes[hash] || "/dashboard/home");
+        }
+
+        setActiveTab();
+
+        $(".nav-item a").click(function (e) {
+          e.preventDefault();
+          const targetHash = $(this).attr("href");
+          history.pushState(null, "", targetHash);
+          setActiveTab();
+        });
+
+        window.addEventListener("hashchange", setActiveTab);
+      });
+    </script>
+  </body>
+</html>

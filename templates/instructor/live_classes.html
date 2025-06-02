@@ -1,0 +1,348 @@
+<div class="live-classes-container">
+  <h1>Your Live Classes</h1>
+  <p>Manage and join your scheduled live sessions with ease.</p>
+
+  <div class="section">
+    <h2>Ongoing Classes</h2>
+    <div class="carousel">
+      <button class="carousel-button prev" aria-label="Previous">❮</button>
+      <div class="carousel-inner">
+        {% for class in ongoing %}
+        <div class="carousel-item">
+          <div class="class-card">
+            <h3>{{ class[3] }}</h3>
+            <p class="time">{{ class[5] }}</p>
+            <p class="description">{{ class[4] or 'No description provided' }}</p>
+            <div class="button-group">
+              <a
+                href="{{ url_for('join_live_class', class_id=class[0]) }}"
+                class="join-btn"
+                target="_blank"
+                >Join Now</a
+              >
+              <button class="delete-btn" data-class-id="{{ class[0] }}">Delete</button>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="carousel-item">
+          <div class="class-card empty">No ongoing classes.</div>
+        </div>
+        {% endfor %}
+      </div>
+      <button class="carousel-button next" aria-label="Next">❯</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Upcoming Classes</h2>
+    <div class="carousel">
+      <button class="carousel-button prev" aria-label="Previous">❮</button>
+      <div class="carousel-inner">
+        {% for class in upcoming %}
+        <div class="carousel-item">
+          <div class="class-card">
+            <h3>{{ class[3] }}</h3>
+            <p class="time">{{ class[5] }}</p>
+            <p class="description">{{ class[4] or 'No description provided' }}</p>
+            <div class="button-group">
+              <a
+                href="{{ url_for('join_live_class', class_id=class[0]) }}"
+                class="join-btn"
+                target="_blank"
+                >Join</a
+              >
+              <button class="delete-btn" data-class-id="{{ class[0] }}">Delete</button>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="carousel-item">
+          <div class="class-card empty">No upcoming classes.</div>
+        </div>
+        {% endfor %}
+      </div>
+      <button class="carousel-button next" aria-label="Next">❯</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  :root {
+    --primary: #605aae;
+    --primary-dark: #4a468e;
+    --background: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-primary: #1a1a1a;
+    --text-secondary: #6b7280;
+  }
+
+  .live-classes-container {
+    padding: 1.5rem;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .section {
+    margin-bottom: 3rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  h2::after {
+    content: "";
+    width: 60px;
+    height: 3px;
+    background: var(--primary);
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+  }
+
+  .carousel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 2rem;
+  }
+
+  .carousel-inner {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    width: 100%;
+    scrollbar-width: none;
+  }
+
+  .carousel-inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carousel-item {
+    flex: 0 0 auto;
+    width: 320px;
+  }
+
+  .class-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e5e7eb;
+  }
+
+  .class-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .class-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+  }
+
+  .class-card .time {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .class-card .description {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .class-card.empty {
+    background: #f3f4f6;
+    color: var(--text-secondary);
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-start;
+  }
+
+  .join-btn {
+    padding: 0.5rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .join-btn:hover {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    transform: translateY(-2px);
+  }
+
+  .delete-btn {
+    padding: 0.5rem 1.5rem;
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .delete-btn:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%);
+    transform: translateY(-2px);
+  }
+
+  .carousel-button {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 0.75rem;
+    font-size: 1.25rem;
+    cursor: pointer;
+    border-radius: 50%;
+    position: absolute;
+    z-index: 1;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .carousel-button.prev {
+    left: 0;
+  }
+
+  .carousel-button.next {
+    right: 0;
+  }
+
+  .carousel-button:hover {
+    background: var(--primary-dark);
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 768px) {
+    .live-classes-container {
+      padding: 1rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    .carousel-item {
+      width: 280px;
+    }
+
+    .carousel-button {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .carousel-button.prev {
+      left: -10px;
+    }
+
+    .carousel-button.next {
+      right: -10px;
+    }
+  }
+  .content {
+    display: contents;
+  }
+  main {
+    background: var(--background);
+  }
+</style>
+
+<script>
+  document.querySelectorAll(".carousel").forEach((carousel) => {
+    const inner = carousel.querySelector(".carousel-inner");
+    const prev = carousel.querySelector(".prev");
+    const next = carousel.querySelector(".next");
+
+    const updateButtonState = () => {
+      prev.disabled = inner.scrollLeft <= 0;
+      next.disabled = inner.scrollLeft + inner.clientWidth >= inner.scrollWidth;
+      prev.style.opacity = prev.disabled ? "0.5" : "1";
+      next.style.opacity = next.disabled ? "0.5" : "1";
+    };
+
+    inner.addEventListener("scroll", updateButtonState);
+    updateButtonState();
+
+    prev.addEventListener("click", () => {
+      inner.scrollBy({ left: -320, behavior: "smooth" });
+    });
+
+    next.addEventListener("click", () => {
+      inner.scrollBy({ left: 320, behavior: "smooth" });
+    });
+  });
+
+  document.querySelectorAll(".delete-btn").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const classId = button.getAttribute("data-class-id");
+      if (confirm("Are you sure you want to delete this live class?")) {
+        const formData = new FormData();
+        formData.append("class_id", classId);
+        formData.append("csrf_token", "{{ csrf_token }}");
+
+        try {
+          const response = await fetch("/instructor/delete-live-class", {
+            method: "POST",
+            body: formData,
+          });
+          const result = await response.json();
+          alert(result.message);
+          if (result.success) {
+            window.location.reload();
+          }
+        } catch (error) {
+          alert("An error occurred. Please try again.");
+        }
+      }
+    });
+  });
+</script>

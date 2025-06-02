@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instructor - Manage Registrations</title>
+    <style>
+      body {
+        font-family: "Nunito", sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .content {
+        display: contents;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="max-width: 1200px; margin: 20px auto; padding: 20px">
+      <div
+        style="
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          margin-bottom: 20px;
+        "
+      >
+        <div
+          style="
+            background: #605ae9;
+            color: white;
+            padding: 15px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h3><i class="fas fa-users"></i> Pending Student Registrations</h3>
+          <div style="display: flex; gap: 10px; align-items: center">
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="Search..."
+              style="padding: 8px; border-radius: 5px; border: 1px solid #ddd"
+            />
+            <button
+              id="downloadCsv"
+              style="
+                background-color: #605ae9;
+                color: white;
+                border: none;
+                padding: 6px 12px;
+                border-radius: 5px;
+                cursor: pointer;
+                margin: 2px;
+              "
+            >
+              <i class="fas fa-file-csv"></i> CSV
+            </button>
+            <button
+              id="downloadPdf"
+              style="
+                background-color: #605ae9;
+                color: white;
+                border: none;
+                padding: 6px 12px;
+                border-radius: 5px;
+                cursor: pointer;
+                margin: 2px;
+              "
+            >
+              <i class="fas fa-file-pdf"></i> PDF
+            </button>
+            <button
+              id="printTable"
+              style="
+                background-color: #605ae9;
+                color: white;
+                border: none;
+                padding: 6px 12px;
+                border-radius: 5px;
+                cursor: pointer;
+                margin: 2px;
+              "
+            >
+              <i class="fas fa-print"></i> Print
+            </button>
+          </div>
+        </div>
+        <div style="padding: 15px">
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for
+          category, message in messages %}
+          <div
+            style="
+              margin-top: 20px;
+              padding: 10px;
+              background: #f8d7da;
+              color: #721c24;
+              border: 1px solid #f5c6cb;
+              border-radius: 4px;
+            "
+          >
+            {{ message }}
+          </div>
+          {% endfor %} {% endif %} {% endwith %} {% if registrations|length > 0 %}
+          <table
+            id="registrationsTable"
+            style="width: 100%; border-collapse: collapse; margin-bottom: 0"
+          >
+            <thead>
+              <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6">
+                <th style="padding: 12px; text-align: left; font-weight: bold">Username</th>
+                <th style="padding: 12px; text-align: left; font-weight: bold">Name</th>
+                <th style="padding: 12px; text-align: left; font-weight: bold">Email</th>
+                <th style="padding: 12px; text-align: left; font-weight: bold">Phone</th>
+                <th style="padding: 12px; text-align: left; font-weight: bold">Enrollment ID</th>
+                <th style="padding: 12px; text-align: left; font-weight: bold">Registered On</th>
+                <th style="padding: 12px; text-align: left; font-weight: bold">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for reg in registrations %}
+              <tr data-enrollment-id="{{ reg[0] }}" style="border-bottom: 1px solid #dee2e6">
+                <td style="padding: 12px">{{ reg[1] }}</td>
+                <td style="padding: 12px">{{ reg[2] }}</td>
+                <td style="padding: 12px">{{ reg[3] }}</td>
+                <td style="padding: 12px">{{ reg[4] }}</td>
+                <td style="padding: 12px">{{ reg[5] }}</td>
+                <td style="padding: 12px">{{ reg[6].strftime('%Y-%m-%d %H:%M') }}</td>
+                <td style="padding: 12px">
+                  <button
+                    style="
+                      background-color: #605ae9;
+                      color: white;
+                      border: none;
+                      padding: 8px 15px;
+                      border-radius: 5px;
+                      cursor: pointer;
+                      margin-right: 5px;
+                    "
+                    class="verify-btn"
+                    data-enrollment-id="{{ reg[0] }}"
+                  >
+                    <i class="fas fa-check"></i> Verify
+                  </button>
+                  <button
+                    style="
+                      background-color: #dc3545;
+                      color: white;
+                      border: none;
+                      padding: 8px 15px;
+                      border-radius: 5px;
+                      cursor: pointer;
+                    "
+                    class="reject-btn"
+                    data-enrollment-id="{{ reg[0] }}"
+                  >
+                    <i class="fas fa-times"></i> Reject
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <p style="text-align: center; padding: 20px">No pending registrations found.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Verify student
+        $(".verify-btn").click(function () {
+          const enrollmentId = $(this).data("enrollment-id");
+          if (confirm("Verify this student registration?")) {
+            $.ajax({
+              url: "/instructor/registrations",
+              method: "POST",
+              data: {
+                enrollment_id: enrollmentId,
+                csrf_token: "{{ csrf_token }}",
+              },
+              success: function (response) {
+                if (response.success) {
+                  alert(response.message);
+                  $(`tr[data-enrollment-id="${enrollmentId}"]`).fadeOut(300, function () {
+                    $(this).remove();
+                    if ($("tbody tr").length === 0) {
+                      $(".card-body").html(
+                        '<p style="text-align: center; padding: 20px;">No pending registrations found.</p>'
+                      );
+                    }
+                  });
+                } else {
+                  alert("Error: " + response.error);
+                }
+              },
+              error: function (xhr) {
+                alert("Error: " + xhr.responseText);
+              },
+            });
+          }
+        });
+
+        // Reject student
+        $(".reject-btn").click(function () {
+          const enrollmentId = $(this).data("enrollment-id");
+          if (
+            confirm("Reject this student registration? This will delete the pending enrollment.")
+          ) {
+            $.ajax({
+              url: "/instructor/registrations/reject",
+              method: "POST",
+              data: {
+                enrollment_id: enrollmentId,
+                csrf_token: "{{ csrf_token }}",
+              },
+              success: function (response) {
+                if (response.success) {
+                  alert(response.message);
+                  $(`tr[data-enrollment-id="${enrollmentId}"]`).fadeOut(300, function () {
+                    $(this).remove();
+                    if ($("tbody tr").length === 0) {
+                      $(".card-body").html(
+                        '<p style="text-align: center; padding: 20px;">No pending registrations found.</p>'
+                      );
+                    }
+                  });
+                } else {
+                  alert("Error: " + response.error);
+                }
+              },
+              error: function (xhr) {
+                alert("Error: " + xhr.responseText);
+              },
+            });
+          }
+        });
+
+        // Search Functionality
+        $("#searchInput").on("keyup", function () {
+          const value = $(this).val().toLowerCase();
+          $("#registrationsTable tbody tr").each(function () {
+            const rowText = $(this).text().toLowerCase();
+            $(this).toggle(rowText.indexOf(value) > -1);
+          });
+        });
+
+        // Row Highlighting on Hover
+        $("#registrationsTable tbody tr").hover(
+          function () {
+            $(this).css("background-color", "#f1f1f1");
+          },
+          function () {
+            $(this).css("background-color", "");
+          }
+        );
+
+        // Export to CSV
+        $("#downloadCsv").click(function () {
+          let csv = "Username,Name,Email,Phone,Enrollment ID,Registered On\n";
+          $("#registrationsTable tbody tr:visible").each(function () {
+            const row = $(this)
+              .find("td")
+              .slice(0, 6)
+              .map(function () {
+                return $(this).text().trim();
+              })
+              .get()
+              .join(",");
+            csv += row + "\n";
+          });
+          const blob = new Blob([csv], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "pending_registrations.csv";
+          a.click();
+          window.URL.revokeObjectURL(url);
+        });
+
+        // Export to PDF
+        $("#downloadPdf").click(function () {
+          const element = document.getElementById("registrationsTable");
+          html2pdf()
+            .from(element)
+            .set({
+              margin: 1,
+              filename: "pending_registrations.pdf",
+              html2canvas: { scale: 2 },
+              jsPDF: { orientation: "landscape" },
+            })
+            .save();
+        });
+
+        // Print Table
+        $("#printTable").click(function () {
+          const printContents = document.getElementById("registrationsTable").outerHTML;
+          const originalContents = document.body.innerHTML;
+          document.body.innerHTML = `<h3>Pending Student Registrations</h3>${printContents}`;
+          window.print();
+          document.body.innerHTML = originalContents;
+          location.reload(); // Reload to restore event listeners
+        });
+      });
+    </script>
+  </body>
+</html>

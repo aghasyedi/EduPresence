@@ -1,0 +1,346 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - EduPresence | Next-Gen Learning</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+
+    <style>
+      .content {
+        display: flex;
+        flex-grow: 1;
+        width: 100%;
+        overflow: auto;
+        position: relative;
+      }
+      .content iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 5px;
+        display: none;
+      }
+      .attendance-container {
+        width: 100%;
+        height: 100%;
+        display: none;
+      }
+      .loading-indicator {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    </style>
+  </head>
+  <body>
+    <main style="position: relative">
+      <nav class="main-menu">
+        <h1
+          style="
+            margin: 10px 0 10px;
+            line-height: 64px;
+            align-items: center;
+            margin: 10px 0;
+            max-width: 100%;
+            font-size: 1.5rem;
+          "
+        >
+          <img
+            src="{{ url_for('static', filename='logo_full.png') }}"
+            alt="E"
+            style="height: 6em; width: auto; vertical-align: middle"
+          />
+        </h1>
+
+        <div class="logo">
+          <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            alt="EduPresence Logo"
+            height="40"
+          />
+        </div>
+        <ul>
+          <li class="nav-item active">
+            <b></b>
+            <b></b>
+            <a href="#dashboard" id="dashboard">
+              <i class="fa fa-house nav-icon"></i>
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#manage" id="manage">
+              <i class="fa fa-chalkboard-teacher nav-icon"></i>
+              <span class="nav-text">Edit Panel</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#create-assignments" id="create-assignments">
+              <i class="fa fa-check-circle nav-icon"></i>
+              <span class="nav-text">Attendance</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#students" id="students">
+              <i class="fa fa-users nav-icon"></i>
+              <span class="nav-text">Students</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#registrations" id="registrations">
+              <i class="fa fa-user-plus nav-icon"></i>
+              <span class="nav-text">Registrations</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#Dino" id="dino">
+              <i class="fa fa-dragon nav-icon"></i>
+              <span class="nav-text">Little Dino</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <b></b>
+            <b></b>
+            <a href="#logout" id="logout">
+              <i class="fa fa-right-from-bracket nav-icon"></i>
+              <span class="nav-text">Log Out</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="content" id="content">
+        <div class="loading-indicator">Loading...</div>
+        <iframe id="contentFrame"></iframe>
+        <div class="attendance-container" id="attendanceContainer"></div>
+      </div>
+    </main>
+
+    <script>
+      $(document).ready(function () {
+        $("#contentFrame").hide();
+        $("#attendanceContainer").hide();
+        $(".loading-indicator").show();
+
+        function loadFrameContent(url) {
+          $("#attendanceContainer").hide();
+          $("#contentFrame").hide();
+          $(".loading-indicator").show();
+          $("#contentFrame").attr("src", url).show();
+        }
+
+        function loadAttendanceContent(url) {
+          $("#contentFrame").hide();
+          $("#attendanceContainer").hide();
+          $(".loading-indicator").show();
+
+          $.ajax({
+            url: url,
+            method: "GET",
+            success: function (data) {
+              $("#attendanceContainer").html(data).show();
+              applyAttendanceStyles();
+            },
+            error: function (xhr, status, error) {
+              $("#attendanceContainer").html("<p>Error loading attendance data.</p>").show();
+            },
+            complete: function () {
+              $(".loading-indicator").hide();
+            },
+          });
+        }
+
+        function applyAttendanceStyles() {
+          const container = $("#attendanceContainer")[0];
+          if (container) {
+            const style = document.createElement("style");
+            style.textContent = `
+              ::-webkit-scrollbar {
+                  width: 14px;
+                  height: 14px;
+              }
+              ::-webkit-scrollbar-track {
+                  background: linear-gradient(135deg, #fff 0%, #e0e3e8 100%);
+                  border-radius: 0px;
+                  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+                  border: 1px solid #d9dce1;
+              }
+              ::-webkit-scrollbar-thumb {
+                  background: linear-gradient(135deg, #605ae9 0%, #483fd8 100%);
+                  border-radius: 0px;
+                  border: 2px solid #f0f2f5;
+                  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2), inset 0 0 3px rgba(255, 255, 255, 0.4);
+                  transition: all 0.3s ease;
+              }
+              ::-webkit-scrollbar-thumb:hover {
+                  background: linear-gradient(135deg, #504be0 0%, #3b33c4 100%);
+                  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3), inset 0 0 5px rgba(255, 255, 255, 0.6);
+                  transform: scale(1.1);
+              }
+              ::-webkit-scrollbar-thumb:active {
+                  background: #3b33c4;
+                  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+                  transform: scale(1);
+              }
+              ::-webkit-scrollbar-corner {
+                  background: #f0f2f5;
+                  border-radius: 0px;
+              }
+              * {
+                  scrollbar-width: thin;
+                  scrollbar-color: #605ae9 #f0f2f5;
+              }
+            `;
+            container.appendChild(style);
+          }
+        }
+
+        function setActiveTab() {
+          const hash = window.location.hash || "#dashboard";
+          $(".nav-item").removeClass("active");
+
+          if (hash === "#logout") {
+            window.location.href = "/logout";
+            return;
+          }
+
+          const activeItem = $(`a[href="${hash}"]`).parent();
+          if (activeItem.length) activeItem.addClass("active");
+
+          const pageRoutes = {
+            "#dashboard": "/admin/users",
+            "#manage": "/edit-course-video",
+            "#registrations": "/instructor/registrations",
+            "#students": "/instructor/students",
+            "#Dino": "https://chromedino.com/",
+          };
+
+          $("#contentFrame").hide();
+          $("#attendanceContainer").hide().empty();
+          $(".loading-indicator").show();
+
+          if (hash === "#create-assignments") {
+            loadAttendanceContent("/attendance");
+          } else if (pageRoutes[hash]) {
+            loadFrameContent(pageRoutes[hash]);
+          } else {
+            loadFrameContent("/admin/users");
+          }
+        }
+
+        setActiveTab();
+        $(window).on("hashchange", function () {
+          setActiveTab();
+        });
+        $(".nav-item a").on("click", function (e) {
+          e.preventDefault();
+          const targetHash = $(this).attr("href");
+          window.location.hash = targetHash;
+        });
+
+        $("#contentFrame").on("load", function () {
+          $(".loading-indicator").hide();
+          $("#contentFrame").show();
+
+          try {
+            const iframe = document.getElementById("contentFrame");
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            const currentSrc = iframe.getAttribute("src");
+
+            const header = iframeDoc.querySelector("header, .header, #header");
+            if (header) header.remove();
+
+            const footer = iframeDoc.querySelector("footer, .footer, #footer");
+            if (footer) footer.remove();
+            const nav = iframeDoc.querySelector("nav, .nav, #nav");
+            if (nav) nav.remove();
+
+            iframeDoc.body.style.margin = "0";
+            iframeDoc.body.style.padding = "0";
+
+            const container = iframeDoc.querySelector(".container");
+            if (container) {
+              container.style.maxWidth = "none";
+              container.style.margin = "0";
+              container.style.borderRadius = "0";
+              const containerH1 = container.querySelector("h1");
+              if (containerH1 && currentSrc === "/admin/users") {
+                containerH1.innerText = "Dashboard | User Profile Management";
+              }
+              if (currentSrc === "/edit-course-video") {
+                containerH1.innerHTML = `Dashboard | User Profile Management 
+                    <a href="/edit-course-video" style="margin-left: 10px; font-size: 14px; text-decoration: none; color: #605ae9;">
+                        (Edit Courses & Videos)
+                    </a>`;
+              }
+            }
+
+            const style = iframeDoc.createElement("style");
+            style.textContent = `
+              ::-webkit-scrollbar {
+                  width: 14px;
+                  height: 14px;
+              }
+              ::-webkit-scrollbar-track {
+                  background: linear-gradient(135deg, #fff 0%, #e0e3e8 100%);
+                  border-radius: 0px;
+                  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+                  border: 1px solid #d9dce1;
+              }
+              ::-webkit-scrollbar-thumb {
+                  background: linear-gradient(135deg, #605ae9 0%, #483fd8 100%);
+                  border-radius: 0px;
+                  border: 2px solid #f0f2f5;
+                  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2), inset 0 0 3px rgba(255, 255, 255, 0.4);
+                  transition: all 0.3s ease;
+              }
+              ::-webkit-scrollbar-thumb:hover {
+                  background: linear-gradient(135deg, #504be0 0%, #3b33c4 100%);
+                  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3), inset 0 0 5px rgba(255, 255, 255, 0.6);
+                  transform: scale(1.1);
+              }
+              ::-webkit-scrollbar-thumb:active {
+                  background: #3b33c4;
+                  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+                  transform: scale(1);
+              }
+              ::-webkit-scrollbar-corner {
+                  background: #f0f2f5;
+                  border-radius: 0px;
+              }
+              * {
+                  scrollbar-width: thin;
+                  scrollbar-color: #605ae9 #f0f2f5;
+              }
+            `;
+            iframeDoc.head.appendChild(style);
+          } catch (e) {
+            console.error("Error manipulating iframe content:", e);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

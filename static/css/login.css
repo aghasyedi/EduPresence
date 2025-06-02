@@ -1,0 +1,134 @@
+:root {
+  --accent: #605ae9;
+  --white: #ffffff;
+  --black: #000000;
+  --dark-gray: #2c2c2c;
+  --gray: #666666;
+  --light-gray: #999999;
+  --lighter-gray: #cccccc;
+}
+
+.form-module {
+  position: relative;
+  background: var(--white);
+  max-width: 320px;
+  width: 100%;
+  border-top: 5px solid var(--accent);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+}
+
+.form-module .toggle {
+  cursor: pointer;
+  position: absolute;
+  top: -0;
+  right: -0;
+  background: var(--accent);
+  width: 30px;
+  height: 30px;
+  margin: -5px 0 0;
+  color: var(--white);
+  font-size: 12px;
+  line-height: 30px;
+  text-align: center;
+}
+
+.form-module .toggle .tooltip {
+  position: absolute;
+  top: 5px;
+  right: -65px;
+  display: block;
+  background: rgba(0, 0, 0, 0.6);
+  width: auto;
+  padding: 5px;
+  font-size: 10px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.form-module .toggle .tooltip:before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: -5px;
+  display: block;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 5px solid rgba(0, 0, 0, 0.6);
+}
+
+.form-module .form {
+  display: none;
+  padding: 40px;
+}
+
+.form-module .form:nth-child(2) {
+  display: block;
+}
+
+.form-module h2 {
+  margin: 0 0 20px;
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.form-module input {
+  outline: none;
+  display: block;
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  margin: 0 0 20px;
+  padding: 10px 15px;
+  box-sizing: border-box;
+  font-weight: 400;
+  transition: 0.3s ease;
+}
+
+.form-module input:focus {
+  border: 1px solid var(--accent);
+  color: var(--dark-gray);
+}
+
+.form-module button {
+  cursor: pointer;
+  background: var(--accent);
+  width: 100%;
+  border: 0;
+  padding: 10px 15px;
+  color: var(--white);
+  transition: 0.3s ease;
+}
+
+.form-module button:hover {
+  background: #29a1d1;
+}
+
+.form-module .cta {
+  background: #f7f7f7;
+  width: 100%;
+  padding: 15px 40px;
+  box-sizing: border-box;
+  color: var(--gray);
+  font-size: 12px;
+  text-align: center;
+}
+
+.form-module .cta a {
+  color: var(--dark-gray);
+  text-decoration: none;
+}
+
+.fab {
+  
+  color: black;
+}
+
+.login-with {
+  display: flex;
+  padding: 10px;
+  justify-content: space-around;
+  flex-direction: row;
+}
+

@@ -1,0 +1,282 @@
+<style>
+  .container-class {
+    display: flex;
+    gap: 20px;
+  }
+
+  .main-content {
+    flex: 2.5;
+  }
+
+  .live-section {
+    flex: 1;
+  }
+
+  .video-container-class {
+    background-color: #000;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .btn-5 {
+    width: 130px;
+    height: 40px;
+    line-height: 42px;
+    padding: 0;
+    border: none;
+  }
+
+  .btn-5:hover {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .btn-5:before,
+  .btn-5:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 2px;
+    width: 0;
+    box-shadow: -1px -1px 5px 0px #fff, 7px 7px 20px 0px #0003, 4px 4px 5px 0px #0002;
+    transition: 400ms ease all;
+  }
+
+  .btn-5:after {
+    right: inherit;
+    top: inherit;
+    left: 0;
+    bottom: 0;
+  }
+
+  .btn-5:hover:before,
+  .btn-5:hover:after {
+    width: 100%;
+    transition: 800ms ease all;
+  }
+
+  .custom-btn {
+    width: 130px;
+    height: 40px;
+    color: #fff;
+    border-radius: 5px;
+    font-family: "Lato", sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+      7px 7px 20px 0px rgba(255, 0, 0, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+    outline: none;
+  }
+
+  video {
+    width: 100%;
+    height: 500px;
+  }
+
+  .button-container-class {
+    margin-top: 10dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+  }
+
+  .video-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: rgba(90, 70, 150);
+    line-height: 1.3;
+    font-family: "Helvetica Neue", sans-serif;
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+
+  /* Description style */
+  .video-description {
+    font-size: 16px;
+    color: #666;
+  }
+
+  .read-more {
+    color: purple;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .timestamp {
+    font-size: 14px;
+    color: #888;
+    margin-top: 8px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  /* Custom button colors with hover effects */
+  .btn-doubt {
+    background: linear-gradient(90deg, rgba(0, 170, 255, 1) 0%, rgba(0, 132, 255, 1) 100%);
+  }
+  .btn-doubt:hover {
+    background: transparent;
+    color: rgba(0, 132, 255, 1);
+  }
+  .btn-doubt:after,
+  .btn-doubt:before {
+    background: rgba(0, 132, 255, 1);
+
+    box-shadow: -1px -1px 5px 0px #fff, 7px 7px 20px 0px #0003,
+      4px 4px 5px 0px rgba(0, 132, 255, 0.6);
+  }
+
+  .btn-read-more {
+    background: linear-gradient(90deg, rgba(255, 193, 7, 1) 0%, rgba(255, 159, 0, 1) 100%);
+  }
+  .btn-read-more:hover {
+    background: transparent;
+    color: rgba(255, 159, 0, 1);
+  }
+  .btn-read-more:after,
+  .btn-read-more:before {
+    background: rgba(255, 159, 0, 1);
+
+    box-shadow: -1px -1px 5px 0px #fff, 7px 7px 20px 0px #0003,
+      4px 4px 5px 0px rgba(255, 159, 0, 0.6);
+  }
+
+  .btn-feedback {
+    background: linear-gradient(90deg, rgba(46, 204, 113, 1) 0%, rgba(39, 174, 96, 1) 100%);
+  }
+  .btn-feedback:hover {
+    background: transparent;
+    color: rgba(39, 174, 96);
+  }
+  .btn-feedback:after,
+  .btn-feedback:before {
+    background: rgba(39, 174, 96);
+
+    box-shadow: -1px -1px 5px 0px #fff, 7px 7px 20px 0px #0003,
+      4px 4px 5px 0px rgba(39, 174, 96, 0.6);
+  }
+
+  .btn-comment {
+    background: linear-gradient(90deg, rgba(255, 87, 34, 1) 0%, rgba(255, 65, 0, 1) 100%);
+  }
+  .btn-comment:hover {
+    background: transparent;
+    color: rgba(255, 65, 0, 1);
+  }
+  .btn-comment:after,
+  .btn-comment:before {
+    background: rgba(255, 65, 0, 1);
+
+    box-shadow: -1px -1px 5px 0px #fff, 7px 7px 20px 0px #0003,
+      4px 4px 5px 0px rgba(255, 65, 0, 0.6);
+  }
+  #custom-player {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+    background-color: #000;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  }
+
+  #player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .controls {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+
+  button,
+  input[type="range"] {
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    color: #fff;
+    padding: 10px;
+  }
+
+  input[type="range"] {
+    width: 50%;
+  }
+</style>
+
+<div class="container-class">
+  <div class="main-content">
+    <div class="video-title">{{ video[2] }}</div>
+    <div class="video-container-class">
+      <iframe
+        width="100%"
+        height="400"
+        src="https://www.youtube.com/embed/{{ video[4] }}"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      >
+      </iframe>
+    </div>
+
+    <div class="timestamp">{{video[9]}}</div>
+    <div class="video-description" id="video-description" data-description="{{ video[3] }}">
+      <span id="visible-description">{{ video[3][:50] }}</span>
+      {% if video[3]|length > 50 %}
+      <span id="more-text" style="display: none">{{ video[3][50:] }}</span>
+      <span class="read-more" onclick="toggleDescription()">...Read More</span>
+      {% endif %}
+    </div>
+    <div class="button-container-class">
+      <button class="btn-5 custom-btn btn-read-more" onclick="openDoubt()">Read More</button>
+      <button class="btn-5 custom-btn btn-doubt" onclick="openDoubt()">Doubt</button>
+      <button class="custom-btn btn-5 btn-feedback" onclick="openFeedback()">Feedback</button>
+      <button class="custom-btn btn-5 btn-comment" onclick="openComment()">Comment</button>
+    </div>
+  </div>
+</div>
+<script>
+  function toggleDescription() {
+    var moreText = document.getElementById("more-text");
+    var visibleDescription = document.getElementById("visible-description");
+    var readMoreBtn = document.querySelector(".read-more");
+
+    if (moreText.style.display === "none") {
+      moreText.style.display = "inline";
+      readMoreBtn.textContent = "...Read Less"; // Change text to "Read Less"
+    } else {
+      moreText.style.display = "none";
+      readMoreBtn.textContent = "...Read More"; // Change text back to "Read More"
+    }
+  }
+
+  function openDoubt() {
+    alert("Doubt section opened!");
+  }
+
+  function openFeedback() {
+    alert("Feedback section opened!");
+  }
+
+  function openComment() {
+    alert("Comment section opened!");
+  }
+
+  // This script makes the full description accessible for copying (including the hidden part)
+  document.getElementById("video-description").addEventListener("copy", function (e) {
+    var fullDescription = this.getAttribute("data-description");
+    e.clipboardData.setData("text/plain", fullDescription); // Override the copied content with full description
+    e.preventDefault(); // Prevent the default copy action
+  });
+</script>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Courses and Videos</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='instructor/css/edit-course-video.css') }}"
+    />
+  </head>
+  <body>
+    <nav class="navbar">
+      <a href="/" class="logo">
+        <!-- <img
+          src="https://www.pngplay.com/wp-content/uploads/6/Education-Icon-PNG-HD-Quality.png"
+          style="filter: invert(1); width: 40px"
+          alt="Logo"
+        /> -->
+        <img
+          src="{{ url_for('static', filename='logo_full.png') }} "
+          alt="E"
+          style="height: 6em; width: auto; vertical-align: middle"
+        />
+        <span style="font-weight: bold; margin-left: 0.3em; white-space: nowrap">
+          Edit Courses and Videos
+        </span>
+      </a>
+      <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/profile">Profile</a>
+        <span class="notification-bell">
+          <i class="fas fa-bell"></i>
+          <span class="badge" id="notificationCount">3</span>
+        </span>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="column" id="stats" style="flex: 0">
+        <h3>Quick Stats</h3>
+        <p>Total Courses: <span id="totalCourses">{{ courses|length }}</span></p>
+        <p>Total Videos: <span id="totalVideos">{{ videos|length }}</span></p>
+        <p>Last Updated: <span id="lastUpdated">{{ 'now'|default('Feb 22, 2025') }}</span></p>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search courses or videos..." />
+        <i class="fas fa-search"></i>
+      </div>
+    </div>
+    <style></style>
+    <div class="container">
+      <div id="courseList" class="column">
+        <h3>Course List</h3>
+        <button class="btn-full" onclick="openModal('addCourseModal')">Add Course</button>
+        <ul id="courses" class="scrollable-list">
+          {% for course in courses %}
+          <li
+            data-course-id="{{ course[0] }}"
+            class="course-item"
+            onclick="selectCourse('{{ course[0] }}', this)"
+          >
+            <strong>{{ course[1] }}</strong>
+            <p>{{ course[2][:26] }}{% if course[2]|length > 26 %}...{% endif %}</p>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div id="videoList" class="column">
+        <h3>Video List</h3>
+        <button class="btn-full" onclick="openModal('addVideoModal')">Add Video</button>
+        <ul id="videos" class="scrollable-list">
+          <p style="text-align: center; color: var(--gray)">Select a course to view videos.</p>
+        </ul>
+      </div>
+      <div id="editForm" class="column">
+        <h3>Edit Form</h3>
+        <form id="editFormContent" style="display: none">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+          <div id="courseEditForm">
+            <label>Course ID:</label
+            ><span class="copy-wrapper"
+              ><input id="courseId" name="courseId" disabled /><button
+                type="button"
+                class="copy-btn"
+                data-target="courseId"
+                title="Copy"
+              >
+                <i class="fa-regular fa-copy"></i></button
+            ></span>
+            <label>Batch ID:</label
+            ><span class="copy-wrapper"
+              ><input id="batchId" name="batchId" disabled /><button
+                type="button"
+                class="copy-btn"
+                data-target="batchId"
+                title="Copy"
+              >
+                <i class="fa-regular fa-copy"></i></button
+            ></span>
+            <label>Batch Info:</label
+            ><span class="copy-wrapper"
+              ><input id="batchInfo" name="batchInfo" disabled /><button
+                type="button"
+                class="copy-btn"
+                data-target="batchInfo"
+                title="Copy"
+              >
+                <i class="fa-regular fa-copy"></i></button
+            ></span>
+            <label>Course Title:</label
+            ><span class="copy-wrapper"
+              ><input id="courseTitle" name="courseTitle" /><button
+                type="button"
+                class="copy-btn"
+                data-target="courseTitle"
+                title="Copy"
+              >
+                <i class="fa-regular fa-copy"></i></button
+            ></span>
+            <label>Course Description:</label
+            ><span class="copy-wrapper">
+              <textarea id="courseDescription" name="courseDescription"></textarea
+              ><button type="button" class="copy-btn" data-target="courseDescription" title="Copy">
+                <i class="fa-regular fa-copy"></i></button
+            ></span>
+            <label>Instructor ID:</label
+            ><!-- Wrapper for Input and Dropdown -->
+            <span class="copy-wrapper">
+              <input id="instructorAdditional" name="instructorAdditional" disabled />
+              <button
+                type="button"
+                class="copy-btn"
+                data-target="instructorAdditional"
+                title="Copy"
+              >
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </span>
+            {%if admin%}
+            <!-- Dropdown for Selecting Instructor -->
+            <select id="instructorDropdown">
+              <option value="" selected disabled>Select an instructor</option>
+              {% for instructor in instructors %}
+              <option value="{{ instructor[0] }}">{{ instructor[2] }} ({{ instructor[1] }})</option>
+              {% endfor %}
+            </select>
+            {%endif%}
+            <div style="display: flex; gap: 10px">
+              <button type="submit" style="width: 100%">Save Course</button
+              ><button
+                type="button"
+                class="reset-btn"
+                style="width: 100%"
+                onclick="resetCourseForm()"
+              >
+                Reset
+              </button>
+            </div>
+            {%if admin%}
+            <button
+              type="button"
+              class="del-cou-btn"
+              id="deleteCourse"
+              onclick="deleteVideoCourse('course')"
+            >
+              Delete Course
+            </button>
+            {%endif%}
+          </div>
+          <div id="videoEditForm" style="display: none">
+            <label>Video ID:</label
+            ><span class="copy-wrapper"
+              ><input id="videoId" disabled /><button
+                type="button"
+                class="copy-btn"
+                data-target="videoId"
+                title="Copy"
+              >
+                <i class="fa-regular fa-copy"></i></button
+            ></span>
+            <label>Course ID:</label
+            ><span class="copy-wrapper"
+              ><input id="videoCourseId" disabled /><button
+                type="button"
+                class="copy-btn"
+                data-target="videoCourseId"
+                title="Copy"
+              >
+                <i class="fa-regular fa-copy"></i></button
+            ></span>
+            <label>Video Title:</label
+            ><span class="copy-wrapper"
+              ><input id="videoTitle" /><button
+                type="button"
+                class="copy-btn"
+                data-target="videoTitle"
+                title="Copy"
+              >
+                <i class="fa-regular fa-copy"></i></button
+            ></span>
+            <label>Video Description:</label
+            ><span class="copy-wrapper">
+              <textarea id="videoDescription" style="height: 10ch"></textarea
+              ><button type="button" class="copy-btn" data-target="videoDescription" title="Copy">
+                <i class="fa-regular fa-copy"></i></button
+            ></span>
+            <label>Video ID:</label
+            ><span class="copy-wrapper"
+              ><input id="videoUrl" disabled /><button
+                type="button"
+                class="copy-btn"
+                data-target="videoUrl"
+                title="Copy"
+              >
+                <i class="fa-regular fa-copy"></i></button
+            ></span>
+            <label>Thumbnail URL:</label
+            ><span class="copy-wrapper"
+              ><input id="videoThumbnail" /><button
+                type="button"
+                class="copy-btn"
+                data-target="videoThumbnail"
+                title="Copy"
+              >
+                <i class="fa-regular fa-copy"></i></button
+            ></span>
+            <label>Thumbnail Preview:</label
+            ><img
+              id="videoThumbnailPreview"
+              src=""
+              alt="Thumbnail Preview"
+              class="video-thumbnail"
+            />
+            <label>Duration:</label><input id="videoDuration" />
+            <div style="display: flex; gap: 10px">
+              <button type="submit" style="width: 100%">Save Video</button
+              ><button
+                type="button"
+                class="reset-btn"
+                style="width: 100%"
+                onclick="resetVideoForm()"
+              >
+                Reset
+              </button>
+            </div>
+            <button type="button" class="del-cou-btn" onclick="deleteVideoCourse('video')">
+              Delete Video
+            </button>
+          </div>
+        </form>
+        <p id="formMessage"></p>
+      </div>
+    </div>
+
+    <div id="addCourseModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('addCourseModal')">×</span>
+        <h3>Add Course</h3>
+        <form id="addCourseForm">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+          <label>Course Title:</label>
+          <input id="addCourseTitle" name="courseTitle" required />
+          <label>Course Description:</label>
+          <textarea id="addCourseDescription" name="courseDescription" required></textarea>
+          <label>Select Batch:</label>
+          <select id="addCourseBatch" name="addCourseBatch" required>
+            <option value="">-- Select Batch --</option>
+            {% for batch in batches %}
+            <option value="{{ batch[0] }}">{{ batch[1] }}</option>
+            {% endfor %}
+          </select>
+          <label>Instructor ID:</label>
+
+          <select id="addInstructorId" name="instructorId">
+            <option value="" selected disabled>Select an instructor</option>
+            {% for instructor in instructors %}
+            <option value="{{ instructor[0] }}">{{ instructor[2] }} ({{ instructor[1] }})</option>
+            {% endfor %}
+          </select>
+
+          <div style="display: flex; gap: 10px">
+            <button type="submit">Add Course</button>
+            <button type="button" class="reset-btn" onclick="closeModal('addCourseModal')">
+              Cancel
+            </button>
+          </div>
+          <p id="addCourseMessage" style="text-align: center; color: green"></p>
+        </form>
+      </div>
+    </div>
+
+    <div id="addVideoModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('addVideoModal')">×</span>
+        <h3>Add Video</h3>
+        <form id="addVideoForm">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+          <label>Select Course:</label>
+          <select id="addVideoCourseId" name="addVideoCourseId" required>
+            <option value="">-- Select Course --</option>
+            {% for course in courses %}
+            <option value="{{ course[0] }}">{{ course[1] }}</option>
+            {% endfor %}
+          </select>
+          <label>Video Title:</label>
+          <input id="addVideoTitle" name="addVideoTitle" required />
+          <label>Video Description:</label>
+          <textarea id="addVideoDescription" name="addVideoDescription" required></textarea>
+          <label>Video ID:</label>
+          <input id="addVideoUrl" name="addVideoUrl" required />
+          <label>Thumbnail URL:</label>
+          <input id="addVideoThumbnail" name="addVideoThumbnail" required />
+          <label>Thumbnail Preview:</label>
+          <img
+            id="addVideoThumbnailPreview"
+            src=""
+            alt="Thumbnail Preview"
+            class="video-thumbnail"
+          />
+          <label>Duration:</label>
+          <input id="addVideoDuration" name="addVideoDuration" required />
+          <div style="display: flex; gap: 10px">
+            <button type="submit">Add Video</button>
+            <button type="button" class="reset-btn" onclick="closeModal('addVideoModal')">
+              Cancel
+            </button>
+          </div>
+          <p id="addVideoMessage" style="text-align: center; color: green"></p>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2025 Learning Platform. All rights reserved.</p>
+      <div class="social-links">
+        <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i></a>
+        <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin"></i></a>
+      </div>
+    </footer>
+
+    <div id="toast" class="toast"></div>
+    <script>
+      const csrfToken = "{{ csrf_token }}";
+      const urlId = "{{ url_id|default('') }}";
+      const videos = {{ videos | tojson | safe }};
+      courses = {{ courses | tojson | safe }};
+      batches = {{ batches | tojson | safe }};
+    </script>
+    <script src="{{ url_for('static', filename='instructor/js/edit-course-video.js') }}"></script>
+
+    {%if admin%}
+    <!-- hiding from everyone-{admin}  -->
+    <script>
+      function loadInstructorId(instructorId) {
+        const inputField = document.getElementById("instructorAdditional");
+        const dropdown = document.getElementById("instructorDropdown");
+
+        if (instructorId) {
+          inputField.value = instructorId;
+          dropdown.value = instructorId; // Auto-select matching dropdown option
+        } else {
+          inputField.value = "Instructor ID not found";
+          dropdown.value = ""; // Reset dropdown if not found
+        }
+      }
+
+      // When a card is clicked, update the input and dropdown
+      document.querySelectorAll(".instructor-card").forEach((card) => {
+        card.addEventListener("click", function () {
+          const instructorId = this.dataset.instructorId || null;
+          loadInstructorId(instructorId);
+        });
+      });
+
+      // When dropdown selection changes, update the input field
+      document.getElementById("instructorDropdown").addEventListener("change", function () {
+        document.getElementById("instructorAdditional").value = this.value;
+      });
+    </script>
+    {%endif%}
+  </body>
+</html>

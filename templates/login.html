@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - EduPresence</title>
+
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="navbar">
+        <div class="logo">
+          <img
+            src="{{ url_for('static', filename='logo_dark.png') }}"
+            alt="EduPresence Logo"
+            height="40"
+          /><span>duPresence</span>
+        </div>
+        <nav>
+          <div class="button-effect">
+            <a class="effect effect-5" href="/" title="Learn More">
+              Home
+              <i class="fas fa-arrow-right"></i>
+            </a>
+            <a class="effect effect-5" href="/#about" title="About">
+              About
+              <i class="fas fa-arrow-right"></i>
+            </a>
+            <a class="effect effect-5" href="/#testimonials" title="Testimonials">
+              Testimonials
+              <i class="fas fa-arrow-right"></i>
+            </a>
+            <a class="effect effect-5" href="/#contact" title="Contact">
+              Contact
+              <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </nav>
+        <div class="auth-buttons">
+          <a href="/login" class="login-button">Login</a>
+          <a id="dark-mode-toggle" href="#" class="login-button" style="background: agha">🌙</a>
+        </div>
+      </div>
+    </header>
+
+    <div style="margin-top: 13vh"></div>
+
+    <section class="form-module">
+      <div class="toggle">
+        <i class="fa fa-times fa-pencil"></i>
+        <span class="tooltip">Sign Up?</span>
+      </div>
+      <!-- Login Form -->
+
+      <div class="form">
+        <h2>Login to your account</h2>
+        <form id="login-form" method="POST" action="/login">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+          <input type="hidden" name="refer" value="{{ refer_url }}" />
+          <input type="text" name="username" placeholder="Username" required />
+          <input type="password" name="password" placeholder="Password" required />
+          <button type="submit">Login</button>
+        </form>
+        <p id="error-message" style="color: red; display: none"></p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %}
+        <div class="flash-messages" style="color: red">
+          {% for category, message in messages %}
+          <p class="{{ category }}">{{ message }}</p>
+          {% endfor %}
+        </div>
+        {% endif %} {% endwith %}
+        <br />
+
+        <div class="login-with">
+          <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 50 50">
+            <a href="/login-google" class="google-login">
+              <rect width="50" height="50" rx="10" fill="#fff" stroke="#605ae9" stroke-width="2" />
+
+              <g transform="translate(12, 12) scale(1.1)">
+                <path
+                  fill="#4285F4"
+                  d="M23.64 12.27c0-.77-.07-1.51-.2-2.23H12v4.23h6.57c-.3 1.5-1.14 2.77-2.43 3.63v3h3.92c2.3-2.13 3.58-5.27 3.58-8.63z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 24c3.24 0 5.94-1.08 7.92-2.92l-3.92-3c-1.08.72-2.43 1.15-4 1.15-3.08 0-5.7-2.08-6.64-4.88H1.36v3.07C3.35 21.07 7.43 24 12 24z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.36 14.38c-.25-.72-.36-1.48-.36-2.23s.13-1.52.36-2.23V6.85H1.36C.49 8.57 0 10.48 0 12.5s.49 3.93 1.36 5.65l4-3.07z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 5.5c1.78 0 3.37.61 4.63 1.8l3.44-3.44C17.94 1.14 15.24 0 12 0 7.43 0 3.35 2.93 1.36 7.35l4 3.07c.94-2.8 3.56-4.92 6.64-4.92z"
+                />
+              </g>
+            </a>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div class="form">
+        <h2>Create an account (Student)</h2>
+        <form id="register-form" method="POST" action="/register">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+          {% if google_data %}
+          <input type="text" name="name" value="{{ google_data['name'] }}" readonly />
+          <input type="email" name="email" value="{{ google_data['email'] }}" readonly />
+          <input type="hidden" name="google_id" value="{{ google_data['google_id'] }}" />
+          {% else %}
+          <input type="text" name="username" placeholder="Username" required />
+          <input type="text" name="name" placeholder="Full Name" required />
+          <input type="email" name="email" placeholder="Email Address" required />
+          <input type="password" name="password" placeholder="Password" required />
+          {% endif %}
+          <input type="tel" name="phone" placeholder="Phone Number" required />
+          <input type="text" name="enrollment_id" placeholder="Enrollment ID" required />
+          <button type="submit">Register</button>
+        </form>
+      </div>
+
+      <!-- Forgot Password Link -->
+      <div class="cta">
+        <a href="#">Forgot your password?</a>
+      </div>
+    </section>
+
+    <!-- Footer (same as before) -->
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 EduPresence. All rights reserved.</p>
+        <div class="social-links">
+          <a href="https://www.linkedin.com/EduPresence"><i class="fab fa-facebook"></i></a>
+          <a href="https://www.x.com/EduPresence"><i class="fab fa-twitter"></i></a>
+          <a href="https://linkedin.com/EduPresence"><i class="fab fa-linkedin"></i></a>
+
+          <a href="https://www.instagram.com/EduPresence"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        function handleFormSubmission(formId, url, errorMessageId) {
+          $(formId).submit(function (event) {
+            event.preventDefault();
+            console.log("Form data:", $(this).serialize());
+
+            let btn = $(this).find("button");
+            let loader = btn.find(".loader");
+            let btnText = btn.find(".btn-text");
+
+            btn.attr("disabled", true);
+            loader.show();
+            btnText.hide();
+
+            $.ajax({
+              type: "POST",
+              url: url,
+              data: $(this).serialize(),
+              dataType: "json",
+              beforeSend: function (xhr) {
+                var csrfToken = $('input[name="csrf_token"]').val();
+                xhr.setRequestHeader("X-CSRF-Token", csrfToken);
+              },
+              success: function (response) {
+                console.log("Success response:", response);
+                if (response.success) {
+                  window.location.href = response.redirect || "/dashboard";
+                } else {
+                  showError(errorMessageId, response.error || "Invalid login.");
+                }
+              },
+              error: function (xhr) {
+                console.log("Error response:", xhr.status, xhr.responseText);
+                let errorMsg = "An error occurred. Try again.";
+                if (xhr.status === 429) {
+                  errorMsg = "Too many attempts. Please try later.";
+                } else if (xhr.responseJSON && xhr.responseJSON.error) {
+                  errorMsg = xhr.responseJSON.error;
+                }
+                showError(errorMessageId, errorMsg);
+              },
+              complete: function () {
+                btn.attr("disabled", false);
+                loader.hide();
+                btnText.show();
+              },
+            });
+          });
+        }
+
+        function showError(selector, message) {
+          $(selector).text(message).fadeIn();
+          setTimeout(() => $(selector).fadeOut(), 3000);
+        }
+
+        handleFormSubmission("#login-form", "/login", "#error-message");
+        handleFormSubmission("#register-form", "/register", "#register-error-message");
+
+        $("#login-form input, #register-form input").on("input", function () {
+          $("#error-message, #register-error-message").hide();
+        });
+
+        $("#dark-mode-toggle").click(function () {
+          $("body").toggleClass("dark-mode");
+          $(this).text($("body").hasClass("dark-mode") ? "☀️" : "🌙");
+        });
+
+        function toggleForm(isRegister) {
+          $(".toggle").children("i").toggleClass("fa-pencil");
+          $(".form").animate(
+            {
+              height: "toggle",
+              "padding-top": "toggle",
+              "padding-bottom": "toggle",
+              opacity: "toggle",
+            },
+            "slow"
+          );
+
+          window.history.replaceState(null, "", isRegister ? "/register" : "/login");
+        }
+
+        if (window.location.pathname === "/register") {
+          toggleForm(true);
+        }
+
+        $(".toggle").click(function () {
+          let isRegister = window.location.pathname !== "/register";
+          $(this).prop("disabled", true);
+          toggleForm(isRegister);
+          setTimeout(() => $(this).prop("disabled", false), 1000);
+        });
+      });
+    </script>
+  </body>
+</html>

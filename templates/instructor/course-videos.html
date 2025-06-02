@@ -1,0 +1,116 @@
+<!-- University Video Lectures Section -->
+<div style="max-width: 800px; margin: 0 auto">
+  <h1
+    style="
+      text-align: center;
+      color: #1a3c5e;
+
+      font-size: 28px;
+      margin: 0 0 25px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #605ae9;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    "
+  >
+    Latest Lectures
+  </h1>
+
+  {% for video in videos | reverse if video.course == courseId %} {% if loop.index <= 6 %}
+  <div
+    style="
+      display: flex;
+      align-items: center;
+      background: #f9f9f9;
+      border-left: 4px solid #605ae9;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 0 8px 8px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      max-width: 100%;
+      overflow: hidden;
+    "
+    onmouseover="this.style.background='#f0f0f0'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.1)';"
+    onmouseout="this.style.background='#f9f9f9'; this.style.boxShadow='0 2px 4px rgba(0, 0, 0, 0.05)';"
+  >
+    <div
+      style="
+        flex: 0 0 90px;
+        height: 60px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 4px;
+        margin-right: 12px;
+      "
+    >
+      <img
+        src="{{ video[5] }}"
+        alt="{{ video[2] }}"
+        style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease"
+        onmouseover="this.style.transform='scale(1.1)';"
+        onmouseout="this.style.transform='scale(1)';"
+      />
+      <div
+        style="
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.1);
+          mix-blend-mode: overlay;
+        "
+      ></div>
+    </div>
+    <div style="flex: 1; min-width: 0">
+      <h6
+        style="
+          margin: 0;
+
+          font-size: 15px;
+          color: #1a3c5e;
+          font-weight: normal;
+          line-height: 1.3;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        "
+      >
+        {{ video[2] }}
+      </h6>
+      <p
+        style="
+          margin: 3px 0;
+
+          font-size: 12px;
+          color: #555;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        "
+      >
+        {{ video[3][:20] }}...
+      </p>
+      <a
+        href="/class?id={{ video[0] }}"
+        target="_blank"
+        style="
+          display: inline-block;
+
+          font-size: 11px;
+          color: #605ae9;
+          text-decoration: none;
+          font-weight: bold;
+          text-transform: uppercase;
+          transition: color 0.2s ease;
+        "
+        onmouseover="this.style.color='#4a46d1';"
+        onmouseout="this.style.color='#605ae9';"
+      >
+        View →
+      </a>
+    </div>
+  </div>
+  {% endif %} {% endfor %}
+</div>

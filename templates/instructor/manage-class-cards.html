@@ -1,0 +1,79 @@
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='instructor/css/manage-class-cards.css') }}"
+/>
+<h3 style="text-align: center; color: #605ae9; margin-bottom: 20px">Manage Classes</h3>
+
+<div style="display: flex; gap: 10px">
+  <select id="batchDropdown" class="dropdown" style="margin-bottom: 0">
+    <option value="#">Select a Batch</option>
+    {% for batch in batches %}
+    <option value="{{ batch[0] }}">{{ batch[1] }}</option>
+    {% endfor %}
+  </select>
+  <button id="viewClassmatesBtn" class="view-btn" style="display: none; margin: 0">
+    View Students
+  </button>
+
+  <!-- Popup Modal -->
+  <div id="classmatesModal" class="modal">
+    <div class="modal-content">
+      <span class="close">×</span>
+      <h4 style="text-align: center; color: #605ae9; margin-bottom: 20px">Batch Classmates</h4>
+      <div id="studentsList" class="scrollable"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div id="coursesContainerWrapper" class="panel">
+    <div class="panel-header">
+      <h4 id="coursesHeading" class="panel-title">Course List Here</h4>
+      <button id="addCourse" class="action-btn"><i class="fa fa-plus"></i> Add</button>
+    </div>
+    <div id="coursesContainer" class="scrollable">
+      <p id="noBatchMessage" class="centered-text">Select a course to view and manage videos.</p>
+      {% for batch in batches %}
+      <div
+        class="batch-courses"
+        data-batch="{{ batch[0] }}"
+        style="display: none; padding-top: 10px"
+      >
+        {% for course in courses %} {% if course[3] == batch[0] %}
+        <div class="course-card" data-course="{{ course[0] }}">
+          <div class="card-content">
+            <h5 class="course-title bcard-check" data-page="/course?id={{ course[0] }}">
+              <i class="fa fa-video"></i> {{ course[1] }}
+            </h5>
+            <p class="course-desc">{{ course[2][:23] }}...</p>
+          </div>
+          <button
+            class="edit-btn view-course"
+            data-course="{{ course[0] }}"
+            onclick="window.open('/edit-course-video?id={{ course[0] }}', '_blank'); event.stopPropagation();"
+          >
+            <i class="fa fa-edit"></i> Edit
+          </button>
+        </div>
+        {% endif %} {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div id="videoContainer" class="panel">
+    <div class="panel-header">
+      <h4 id="videosHeading" class="panel-title">Course Videos</h4>
+      <button id="addVideo" class="action-btn"><i class="fa fa-plus"></i> Add</button>
+    </div>
+    <div id="videosList" class="scrollable">
+      <p class="centered-text">Select a course to view and manage videos.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const csrfToken = "{{ csrf_token }}";
+  const videos = {{ videos | tojson | safe }} || [];
+</script>
+<script src="{{ url_for('static', filename='instructor/js/manage-class-cards.js') }}"></script>

@@ -1,0 +1,78 @@
+<div class="left-content" id="content">
+  <br />
+  <div id="bcontentL">
+    <h4 style="color: #605ae9; text-align: center; margin-bottom: 15px">View Classes</h4>
+    <p style="text-align: center; color: #777">View insights of your courses.</p>
+  </div>
+</div>
+
+<div class="right-content" id="right-content">
+  <br />
+  <div id="bcontentR">
+    <h4 style="color: #605ae9; text-align: center; margin-bottom: 15px">View Classes</h4>
+    <p style="text-align: center; color: #777">View insights of your courses.</p>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    let previousLeftPage = "/batches";
+    let defaultRightPage = "/batch-default-right";
+
+    function loadContent(page) {
+      $("#bcontentL").fadeOut(50, function () {
+        $(this)
+          .empty()
+          .load(page, function () {
+            $(this).fadeIn(50).css("min-height", "auto");
+
+            let urlParams = new URLSearchParams(page.split("?")[1]);
+            let hasClassId = urlParams.has("id");
+
+            $("#back-batches").toggle(hasClassId);
+            // $("#bcontentR").load(hasClassId ? "/live-chat" : defaultRightPage);
+
+            // $("#bcontentR").load(hasClassId ? "/right-course-videos" : defaultRightPage);
+
+            // Restore previous batch selection
+            let selectedBatch = localStorage.getItem("selectedBatch");
+            if (selectedBatch) {
+              $("#batchDropdown").val(selectedBatch).change();
+            }
+          });
+      });
+    }
+
+    function loadCards(page) {
+      $("#bcontentL").load(page);
+    }
+
+    // Load initial content
+    $("#bcontentL").load("/batches-cards", function () {
+      let selectedBatch = localStorage.getItem("selectedBatch");
+      if (selectedBatch) {
+        $("#batchDropdown").val(selectedBatch).change();
+      }
+    });
+    $("#bcontentR").load(defaultRightPage);
+
+    // Handle back button click
+    $(document).on("click", "#back-batches", function (e) {
+      e.preventDefault();
+      loadContent(previousLeftPage);
+      $("#bcontentR").load(defaultRightPage);
+    });
+
+    //Handle card clicks
+    $("#bcontentL").on("click", ".bcard-check", function () {
+      previousLeftPage = "/batches";
+      loadContent($(this).data("page"));
+    });
+
+    // Handle batches click
+    $("#batches").click(function (e) {
+      e.preventDefault();
+      loadContent("/batches");
+    });
+  });
+</script>

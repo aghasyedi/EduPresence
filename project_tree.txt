@@ -1,0 +1,150 @@
+.
+├── app.py
+├── db.py
+├── flask_session
+│   ├── 0a5410d6c9c97cad51c5c7119f6f38c1
+│   └── 0cbd5c27a657e760bb4a4f93de4d891a
+├── project_tree.txt
+├── static
+│   ├── admin
+│   │   ├── css
+│   │   │   └── admin_users.css
+│   │   └── js
+│   │       └── admin_users.js
+│   ├── attendance
+│   │   ├── 3687eb05-c168-4381-8be1-3e9bb477cee4
+│   │   │   ├── attendance_20250319_154126.jpg
+│   │   │   ├── attendance_20250319_154233.jpg
+│   │   │   ├── attendance_20250319_154848.jpg
+│   │   │   ├── attendance_20250319_160834.jpg
+│   │   │   ├── attendance_20250319_160835.jpg
+│   │   │   ├── attendance_20250319_160909.jpg
+│   │   │   ├── attendance_20250320_131134.jpg
+│   │   │   ├── attendance_20250320_131457.jpg
+│   │   │   ├── attendance_20250325_003039.jpg
+│   │   │   ├── attendance_20250325_003924.jpg
+│   │   │   ├── attendance_20250325_004152.jpg
+│   │   │   ├── attendance_20250325_004458.jpg
+│   │   │   ├── attendance_20250325_004714.jpg
+│   │   │   ├── attendance_20250325_145035.jpg
+│   │   │   ├── attendance_20250411_184210.jpg
+│   │   │   ├── attendance_20250419_003322.jpg
+│   │   │   ├── attendance_20250513_114045.jpg
+│   │   │   ├── attendance_20250527_170026.jpg
+│   │   │   ├── attendance_20250527_170140.jpg
+│   │   │   ├── attendance_20250527_231125.jpg
+│   │   │   ├── attendance_20250529_105128.jpg
+│   │   │   ├── attendance_20250529_233552.jpg
+│   │   │   ├── attendance_20250530_122847.jpg
+│   │   │   └── attendance_20250531_213332.jpg
+│   │   ├── 5043a51c-e438-4984-844a-7c9cd2032254
+│   │   │   └── attendance_20250319_141920.jpg
+│   │   ├── 5a8d4884-5e08-4dd8-8ed8-4e1d128df445
+│   │   │   ├── attendance_20250311_152208.jpg
+│   │   │   └── attendance_20250311_152231.jpg
+│   │   └── b194334b-efaf-4ec3-92fe-3f98d474922b
+│   │       ├── attendance_20250311_151221.jpg
+│   │       ├── attendance_20250311_151611.jpg
+│   │       ├── attendance_20250311_152020.jpg
+│   │       ├── attendance_20250311_152021.jpg
+│   │       ├── attendance_20250311_152027.jpg
+│   │       ├── attendance_20250311_152028.jpg
+│   │       ├── attendance_20250311_152033.jpg
+│   │       ├── attendance_20250311_152034.jpg
+│   │       ├── attendance_20250311_152046.jpg
+│   │       ├── attendance_20250311_152047.jpg
+│   │       ├── attendance_20250312_124229.jpg
+│   │       ├── attendance_20250312_125529.jpg
+│   │       ├── attendance_20250312_125530.jpg
+│   │       ├── attendance_20250314_200102.jpg
+│   │       ├── attendance_20250317_103351.jpg
+│   │       ├── attendance_20250317_103353.jpg
+│   │       ├── attendance_20250318_103921.jpg
+│   │       └── attendance_20250318_103950.jpg
+│   ├── attendance_images
+│   ├── css
+│   │   ├── dashboard.css
+│   │   ├── index.css
+│   │   └── login.css
+│   ├── dashboard
+│   │   └── right-content.html
+│   ├── default-avatar.png
+│   ├── default.jpg
+│   ├── instructor
+│   │   ├── css
+│   │   │   ├── edit-course-video.css
+│   │   │   ├── home.css
+│   │   │   └── manage-class-cards.css
+│   │   ├── js
+│   │   │   ├── attendance.js
+│   │   │   ├── edit-course-video.js
+│   │   │   ├── home.js
+│   │   │   ├── manage-class-cards.js
+│   │   │   └── manage-classes.js
+│   │   └── student
+│   │       └── js
+│   │           └── attendance.js
+│   ├── js
+│   │   ├── script.js
+│   │   └── service-worker.js
+│   ├── logo_dark.png
+│   ├── logo_full.png
+│   ├── logo.png
+│   ├── logo.svg
+│   ├── profile
+│   │   └── student
+│   ├── qr_codes
+│   │   ├── 1.png
+│   │   ├── 2.png
+│   │   └── 5043a51c-e438-4984-844a-7c9cd2032254.png
+│   └── uploads
+│       ├── 5a8d4884-5e08-4dd8-8ed8-4e1d128df445_20250311_143322.jpg
+│       ├── 5a8d4884-5e08-4dd8-8ed8-4e1d128df445_20250311_143346.jpg
+│       ├── 5a8d4884-5e08-4dd8-8ed8-4e1d128df445_20250311_143354.jpg
+│       ├── 5a8d4884-5e08-4dd8-8ed8-4e1d128df445_20250311_143359.jpg
+│       ├── 5a8d4884-5e08-4dd8-8ed8-4e1d128df445_20250311_152147.jpg
+│       ├── af15af0f-e3ea-40ba-a479-2b5e577fb96e_20250317_113051.jpg
+│       ├── b194334b-efaf-4ec3-92fe-3f98d474922b_20250311_142556.jpg
+│       ├── b194334b-efaf-4ec3-92fe-3f98d474922b_20250311_142643.jpg
+│       ├── b194334b-efaf-4ec3-92fe-3f98d474922b_20250311_150241.jpg
+│       ├── b194334b-efaf-4ec3-92fe-3f98d474922b_20250317_110646.jpg
+│       └── e4dcc15f-50fd-4080-90cd-944afe113e7b_20250311_142410.jpg
+├── templates
+│   ├── admin
+│   │   ├── admin_students.html
+│   │   ├── admin_users copy.html
+│   │   └── admin_users.html
+│   ├── admin_dashboard.html
+│   ├── index.html
+│   ├── instructor
+│   │   ├── attendance-left.html
+│   │   ├── attendance.html
+│   │   ├── course-videos.html
+│   │   ├── create_live_class.html
+│   │   ├── edit-course-video.html
+│   │   ├── home.html
+│   │   ├── instructor_registrations.html
+│   │   ├── live_classes.html
+│   │   ├── manage-class-cards.html
+│   │   ├── manage-classes.html
+│   │   ├── verify-face.html
+│   │   └── verify-qr-scanner.html
+│   ├── instructor_dashboard.html
+│   ├── login.html
+│   ├── student
+│   │   ├── attendance.html
+│   │   ├── batches-cards.html
+│   │   ├── batches.html
+│   │   ├── class-video.html
+│   │   ├── class.html
+│   │   ├── course-videos.html
+│   │   ├── course.html
+│   │   ├── home.html
+│   │   ├── live_classes.html
+│   │   └── live-chat.html
+│   └── student_dashboard.html
+├── timeago.py
+└── uploads
+    └── young-bearded-man-with-striped-shirt_273609-5677.avif
+
+29 directories, 119 files

@@ -1,0 +1,194 @@
+<div class="create-live-class-container">
+  <h1>Create a New Live Class</h1>
+  <p>Schedule a live session for your students using Jitsi Meet.</p>
+  <form id="createLiveClassForm" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <div class="form-group">
+      <label for="batch_id">Select Batch</label>
+      <select name="batch_id" id="batch_id" required>
+        {% for batch in batches %}
+        <option value="{{ batch[0] }}">{{ batch[1] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-groupache">
+      <label for="course_id">Select Course</label>
+      <select name="course_id" id="course_id" required>
+        {% for course in courses %}
+        <option value="{{ course[0] }}">{{ course[1] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="title">Class Title</label>
+      <input
+        type="text"
+        name="title"
+        id="title"
+        placeholder="e.g., Introduction to Python"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea
+        name="description"
+        id="description"
+        placeholder="Briefly describe the class..."
+      ></textarea>
+    </div>
+    <div class="form-group">
+      <label for="scheduled_at">Scheduled Date & Time</label>
+      <input type="datetime-local" name="scheduled_at" id="scheduled_at" required />
+    </div>
+    <button type="submit" class="create-btn">Create Live Class</button>
+  </form>
+</div>
+
+<style>
+  :root {
+    --primary: #605aae;
+    --primary-dark: #4a468e;
+    --background: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-primary: #1a1a1a;
+    --text-secondary: #6b7280;
+    --border: #e5e7eb;
+  }
+
+  .create-live-class-container {
+    max-width: 500px;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--card-bg);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+
+  select,
+  input[type="text"],
+  input[type="datetime-local"],
+  textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    background: var(--card-bg);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;
+  }
+
+  select:focus,
+  input[type="text"]:focus,
+  input[type="datetime-local"]:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(96, 90, 174, 0.1);
+  }
+
+  textarea {
+    height: 120px;
+    resize: vertical;
+  }
+
+  .create-btn {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .create-btn:hover {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    transform: translateY(-2px);
+  }
+
+  .create-btn:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    .create-live-class-container {
+      margin: 1.5rem;
+      padding: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+
+  .content {
+    display: contents;
+  }
+  main {
+    background: var(--background);
+  }
+</style>
+
+<script>
+  document.getElementById("createLiveClassForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    try {
+      const response = await fetch("/instructor/create-live-class", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      if (result.success) {
+        alert(`${result.message}\nLink: ${result.jitsi_link}`);
+        window.location.href = "#create-live-class";
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      alert("An error occurred. Please try again.");
+    }
+  });
+</script>

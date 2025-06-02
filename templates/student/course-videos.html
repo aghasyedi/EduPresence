@@ -1,0 +1,61 @@
+<!-- Latest Videos Section -->
+<h1 style="text-align: center; color: rgba(90, 70, 150)">Latest 5 Videos</h1>
+
+{% for video in videos | reverse if video.course == courseId %} {% if loop.index <= 5 %}
+<div
+  style="
+    display: flex;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+    margin: 10px;
+    overflow: hidden;
+    min-height: 75px;
+  "
+>
+  <div style="flex: 0 0 100px; height: 75px">
+    <img
+      src="{{ video[4] }}"
+      alt="{{ video[2] }}"
+      style="
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+      "
+    />
+  </div>
+  <div
+    style="
+      flex: 1;
+      padding: 5px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    "
+  >
+    <h6 style="margin: 0; font-size: 14px; color: #333">{{ video[1] }}</h6>
+    <p
+      style="
+        margin: 2px 0;
+        font-size: 12px;
+        color: #555;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      "
+    >
+      {{ video[2][:23] }}...
+    </p>
+    <a
+      href="/class?id={{ video[0] }}"
+      target="_blank"
+      style="font-size: 12px; color: #605ae9; text-decoration: none; font-weight: bold"
+    >
+      Watch Video
+    </a>
+  </div>
+</div>
+{% endif %} {% endfor %}

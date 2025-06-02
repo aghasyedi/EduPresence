@@ -1,0 +1,472 @@
+<div class="left-content" id="content">
+  <div class="activities">
+    <h1>Today's Lectures</h1>
+    <div>Here's are the Lectures for todays class 12th September 2022.</div>
+    <style>
+      /* Carousel container spans full width */
+      .carousel {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        margin: 20px auto;
+      }
+      /* The inner container arranges items in a row */
+      .carousel-inner {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+      }
+      /* Each carousel item (slide) gets a default flex basis.
+               This will be updated dynamically via JavaScript. */
+      .carousel-item {
+        flex: 0 0 33.33%; /* default: 4 items visible */
+        box-sizing: border-box;
+        padding: 5px;
+      }
+      .carousel-item img {
+        width: 100%;
+        height: 170px;
+        display: block;
+        border: 2px solid rgb(73, 57, 113);
+        border-radius: 5px;
+      }
+      /* Navigation buttons styling */
+      .carousel-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        border: none;
+        color: #fff;
+        font-size: 2rem;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 2;
+      }
+      .carousel-button.prev {
+        left: 10px;
+      }
+      .carousel-button.next {
+        right: 10px;
+      }
+      .image-container {
+        position: relative;
+      }
+
+      .title-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+        color: white;
+        padding: 10px;
+        max-height: 30px; /* initial height showing a preview */
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        padding-bottom: 4vh;
+      }
+
+      /* On hover, expand to show the full title card */
+      .image-container:hover .title-overlay {
+        max-height: 50px; /* adjust this value as needed */
+      }
+    </style>
+    <div class="carousel">
+      <!-- Left navigation button -->
+      <button class="carousel-button prev">&#10094;</button>
+
+      <div class="carousel-inner">
+        {% for video in videos|reverse %}
+        <div class="carousel-item">
+          <div class="image-container">
+            <a href="/class?id={{ video.0 }}" target="_blank">
+              <img src="{{ video.4 }}" alt="{{ video.1 }}" />
+            </a>
+            <div class="title-overlay">{{ video.1 }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Right navigation button -->
+      <button class="carousel-button next">&#10095;</button>
+    </div>
+
+    <script>
+      function initializeCarousel() {
+        // Select the carousel inner container and all items
+        const carouselInner = document.querySelector(".carousel-inner");
+        const items = document.querySelectorAll(".carousel-item");
+        if (!carouselInner || items.length === 0) return; // Prevent errors if carousel is missing
+
+        const totalItems = items.length;
+        let currentIndex = 0;
+        let visibleItems = 3; // Default number (will be updated dynamically)
+        let maxIndex = totalItems - visibleItems;
+
+        // Determine the number of visible items based on window width.
+        function calculateVisibleItems() {
+          const width = window.innerWidth;
+          if (width < 600) return 1;
+          else if (width < 900) return 2;
+          else return 3;
+        }
+
+        // Update each item's width and recalculate the max index.
+        function updateVisibleItems() {
+          visibleItems = calculateVisibleItems();
+          items.forEach((item) => {
+            item.style.flex = `0 0 ${100 / visibleItems}%`;
+          });
+          maxIndex = totalItems - visibleItems;
+          if (currentIndex > maxIndex) {
+            currentIndex = maxIndex;
+          }
+          updateCarousel();
+        }
+
+        // Update the carousel translation based on currentIndex.
+        function updateCarousel() {
+          carouselInner.style.transform = `translateX(-${currentIndex * (100 / visibleItems)}%)`;
+        }
+
+        // Auto-slide functionality (shift one image at a time)
+        let interval = setInterval(() => {
+          currentIndex++;
+          if (currentIndex > maxIndex) {
+            currentIndex = 0;
+          }
+          updateCarousel();
+        }, 4000);
+
+        // Left button click: move carousel one slide to the left.
+        document.querySelector(".carousel-button.prev").addEventListener("click", () => {
+          currentIndex--;
+          if (currentIndex < 0) {
+            currentIndex = maxIndex;
+          }
+          updateCarousel();
+        });
+
+        // Right button click: move carousel one slide to the right.
+        document.querySelector(".carousel-button.next").addEventListener("click", () => {
+          currentIndex++;
+          if (currentIndex > maxIndex) {
+            currentIndex = 0;
+          }
+          updateCarousel();
+        });
+
+        // Recalculate the number of visible items when the window is resized.
+        window.addEventListener("resize", updateVisibleItems);
+
+        // Stop auto-slide when navigating away
+        document.addEventListener("visibilitychange", function () {
+          if (document.hidden) {
+            clearInterval(interval);
+          } else {
+            interval = setInterval(() => {
+              currentIndex++;
+              if (currentIndex > maxIndex) {
+                currentIndex = 0;
+              }
+              updateCarousel();
+            }, 4000);
+          }
+        });
+
+        // Initial setup
+        updateVisibleItems();
+      }
+
+      // Reinitialize the carousel when new content is loaded
+      $(document).on("DOMSubtreeModified", "#content", function () {
+        initializeCarousel();
+      });
+
+      // Initialize carousel on page load
+      $(document).ready(function () {
+        initializeCarousel();
+      });
+    </script>
+    <div style="display: flex; justify-content: center; align-items: center; margin: 0">
+      <button
+        class="btn"
+        style="
+          background-color: #605aae;
+          color: #fff;
+          border: none;
+          padding: 12px 24px;
+          font-size: 16px;
+          cursor: pointer;
+          border-radius: 50px;
+          margin-bottom: 0px;
+        "
+        onclick="window.location.href='#batches';"
+      >
+        <h4>View All Classes &#8594;</h4>
+      </button>
+    </div>
+  </div>
+
+  <div class="left-bottom">
+    <div class="weekly-schedule">
+      <h1>Class Management Panel</h1>
+      <div class="calendar">
+        {% for video in videos[-5:] %}
+        <!-- Get last 5 items -->
+        <div class="day-and-activity activity-one">
+          <div class="day">
+            <h1>{{ loop.index }}</h1>
+            <!-- <p>Mar</p> -->
+          </div>
+          <div class="activity">
+            <h2>{{ video[1] }} ({{ video[2] }})</h2>
+          </div>
+          <!-- <button
+            class="btn"
+            onclick="window.open('/edit-course-video?id={{ video[0] }}', '_blank')"
+          >
+            Edit Class
+          </button> -->
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="right-content" id="right-content">
+  <div class="user-info">
+    <img
+      src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/40b7cce2-c289-4954-9be0-938479832a9c"
+      alt="user"
+    />
+    <h4>
+      {% if session['info']['name']|length > 10 %} {{ session['info']['name'].split()[0] }} {{
+      session['info']['name'].split()[-1][:3] }}. {% else %} {{ session['info']['name'] }} {% endif
+      %}
+    </h4>
+
+    <div class="icon-container">
+      <!-- <i class="fa fa-bell nav-icon" title="Notifications"></i>
+      <i class="fa fa-message nav-icon" style="margin-right: 10px" title="Messages"></i> -->
+      <a href="/logout" style="text-decoration: none; color: inherit">
+        <i
+          class="fa fa-sign-out-alt nav-icon"
+          style="display: var(--fa-display, ruby)"
+          title="Log Out"
+        ></i>
+      </a>
+    </div>
+  </div>
+
+  <div
+    style="
+      max-width: 800px;
+
+      border-radius: 12px;
+      padding: 30px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    "
+  >
+    <div style="text-align: center; margin-bottom: 30px">
+      <a
+        href="#live-classes"
+        class="btn"
+        style="
+          background-color: #605aae;
+          color: #fff;
+          border: none;
+          padding: 12px 24px;
+          font-size: 16px;
+          cursor: pointer;
+          border-radius: 50px;
+        "
+      >
+        View All Live Classes
+      </a>
+    </div>
+    <h2
+      style="
+        color: #605ae9;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 30px;
+        text-align: center;
+        letter-spacing: -0.5px;
+      "
+    >
+      Live Classes
+    </h2>
+    <div style="display: grid; gap: 20px">
+      {% for class in live_classes%}
+      <div
+        style="
+          background: #ffffff;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        "
+      >
+        <div>
+          <p
+            style="
+              margin: 0;
+              font-size: 18px;
+              color: #605aae;
+              font-weight: 600;
+              letter-spacing: -0.2px;
+            "
+          >
+            {{ class[3] }}
+          </p>
+          <div class="datetime-card">
+            <!-- Start -->
+            <div class="datetime-section">
+              <div class="icon-circle start">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <div class="text">
+                <div class="label">Start</div>
+                <div class="value">{{ class[5].strftime('%d %b %Y at %I:%M %p') }}</div>
+              </div>
+            </div>
+
+            <!-- End -->
+            <div class="datetime-section">
+              <div class="icon-circle end">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6v6l4 2"
+                  />
+                </svg>
+              </div>
+              <div class="text">
+                <div class="label">End</div>
+                <div class="value">{{ class[7].strftime('%d %b %Y at %I:%M %p') }}</div>
+              </div>
+            </div>
+          </div>
+
+          <style>
+            .datetime-card {
+              display: flex;
+              flex-direction: column;
+              gap: 16px;
+              max-width: 400px;
+              margin: 0 auto;
+              padding: 20px;
+              background: #ffffff;
+              border-radius: 16px;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+              font-family: "Helvetica Neue", sans-serif;
+            }
+
+            .datetime-section {
+              display: flex;
+              align-items: center;
+              width: 100%;
+            }
+
+            .icon-circle {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 48px;
+              height: 48px;
+              border-radius: 50%;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+              margin-right: 12px;
+            }
+
+            .icon-circle.start {
+              background: linear-gradient(135deg, #4a90e2 0%, #50e3c2 100%);
+            }
+
+            .icon-circle.end {
+              background: linear-gradient(135deg, #9013fe 0%, #d0021b 100%);
+            }
+
+            .icon {
+              width: 20px;
+              height: 20px;
+              color: #fff;
+            }
+
+            .text .label {
+              font-size: 11px;
+              color: #888;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+
+            .text .value {
+              font-size: 16px;
+              color: #333;
+              font-weight: 600;
+              margin-top: 2px;
+            }
+          </style>
+
+          <p style="margin: 12px 0 0">
+            <a
+              href="{{ class[6] }}"
+              target="_blank"
+              class="btn"
+              style="
+                text-align: center;
+                background-color: #605aae;
+                color: #fff;
+                border: none;
+                padding: 12px 24px;
+                font-size: 16px;
+                cursor: pointer;
+                border-radius: 50px;
+              "
+            >
+              Join Class
+            </a>
+          </p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>

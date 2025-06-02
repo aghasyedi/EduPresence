@@ -1,0 +1,365 @@
+<h3 style="text-align: center; color: #605ae9; margin-bottom: 20px">Select Batch</h3>
+<div style="display: flex; gap: 10px">
+  <select id="batchDropdown" class="dropdown" style="margin-bottom: 0">
+    <option value="">Select a Batch</option>
+    {% for batch in batches %}
+    <option value="{{ batch.id }}">{{ batch.name }}</option>
+    {% endfor %}
+  </select>
+  <button id="viewClassmatesBtn" class="view-btn" style="display: none; margin: 0">
+    View Classmates
+  </button>
+
+  <!-- Popup Modal -->
+  <div id="classmatesModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h4 style="text-align: center; color: #605ae9; margin-bottom: 20px">Batch Classmates</h4>
+      <div id="studentsList" class="scrollable"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div id="coursesContainerWrapper" class="panel">
+    <h4 id="coursesHeading" class="panel-heading">Course List Here</h4>
+    <div id="coursesContainer" class="scrollable">
+      <p id="noBatchMessage" class="centered-text">Select a course to view videos.</p>
+      {% for batch in batches %}
+      <div class="batch-courses" data-batch="{{ batch.id }}" style="display: none">
+        {% for course in courses %}
+        <div class="course-card" data-course="{{ course.id }}">
+          <div class="card-content">
+            <h5 class="course-title bcard-check" data-page="/course?id={{ course.id }}">
+              {{ course.name }}
+            </h5>
+            <p class="course-desc">{{ course.description[:23] }}...</p>
+            <p class="course-instructor"><strong>Instructor:</strong> {{ course.instructor }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div id="videoContainer" class="panel">
+    <h4 id="videosHeading" class="panel-heading">Course Videos</h4>
+    <div id="videosList" class="scrollable"></div>
+  </div>
+</div>
+
+<style>
+  .dropdown {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #605ae9;
+    border-radius: 8px;
+    font-size: 18px;
+    background-color: white;
+    color: #333;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+
+  .container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    margin: 20px auto;
+    display: flex;
+    gap: 20px;
+    height: calc(100vh - 35vh);
+  }
+
+  .panel {
+    flex: 1;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-heading {
+    text-align: center;
+    color: #605ae9;
+    margin-bottom: 10px;
+    position: sticky;
+    top: 0;
+    background: #f9f9f9;
+    padding: 10px;
+    z-index: 10;
+    border-bottom: 2px solid #ddd;
+  }
+
+  .scrollable {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .centered-text {
+    text-align: center;
+    color: #777;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+
+  .course-card,
+  .video-card {
+    position: relative;
+    background: linear-gradient(135deg, #605ae9 0%, #362fb5 100%);
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+  }
+
+  .course-card:hover,
+  .video-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(96, 90, 233, 0.4);
+  }
+
+  .course-card::before,
+  .video-card::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(30deg);
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+
+  .course-card:hover::before,
+  .video-card:hover::before {
+    top: -40%;
+    left: -40%;
+  }
+
+  .video-thumbnail {
+    width: 50px;
+    height: 38px;
+    border-radius: 6px;
+    object-fit: cover;
+    margin-right: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .card-content {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+
+  .course-title {
+    margin: 0 0 3px;
+    font-size: 14px;
+    font-weight: 600;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    color: white;
+    text-align: center;
+  }
+
+  .course-desc,
+  .video-desc {
+    margin: 0 0 3px;
+    font-size: 12px;
+    opacity: 0.9;
+  }
+
+  .course-instructor {
+    margin: 0;
+    font-size: 12px;
+    opacity: 0.9;
+  }
+
+  .video-title {
+    margin: 0 0 3px;
+    font-size: 14px;
+    font-weight: 600;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+  }
+  .view-btn {
+    padding: 10px 20px;
+    background: #605ae9;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 10px 0;
+    transition: background 0.3s ease;
+  }
+
+  .view-btn:hover {
+    background: #362fb5;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+    position: relative;
+  }
+
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+  }
+
+  .student-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .student-item:last-child {
+    border-bottom: none;
+  }
+</style>
+
+<script>
+  $(document).ready(() => {
+    const $batchDropdown = $("#batchDropdown");
+    const $noBatchMessage = $("#noBatchMessage");
+    const $coursesHeading = $("#coursesHeading");
+    const $videosList = $("#videosList");
+    const $videosHeading = $("#videosHeading");
+    const $viewClassmatesBtn = $("#viewClassmatesBtn");
+    const $modal = $("#classmatesModal");
+    const $studentsList = $("#studentsList");
+    const $closeBtn = $(".close");
+    const selectedBatch = localStorage.getItem("selectedBatch");
+
+    const updateUI = () => {
+      const batchValue = $batchDropdown.val();
+      $(".batch-courses").hide();
+
+      if (batchValue) {
+        $noBatchMessage.hide();
+        $(`.batch-courses[data-batch="${batchValue}"]`).show();
+        $coursesHeading.text(`Courses in ${$batchDropdown.find(":selected").text()}`);
+        $viewClassmatesBtn.show();
+      } else {
+        $noBatchMessage.show();
+        $coursesHeading.text("Course List Here");
+        $viewClassmatesBtn.hide();
+      }
+
+      $videosList.html("<p class='centered-text'>Select a course to view videos.</p>");
+      $videosHeading.text("Course Videos");
+    };
+
+    if (selectedBatch) {
+      $batchDropdown.val(selectedBatch);
+      updateUI();
+    }
+
+    $batchDropdown.on("change", function () {
+      localStorage.setItem("selectedBatch", this.value);
+      updateUI();
+    });
+    $viewClassmatesBtn.on("click", () => {
+      const batchId = $batchDropdown.val();
+      if (!batchId) return;
+
+      $.get(`/get_batch_students/${batchId}`, (data) => {
+        if (data.error) {
+          $studentsList.html("<p class='centered-text'>Error loading students</p>");
+        } else {
+          const studentsHtml = data.students
+            .map(
+              (student) => `
+            <div class="student-item">
+              <strong>${student.name}</strong><br>
+              <span>${student.email}</span>
+              <a title="Mail - ${student.name}" href="mailto:${student.email}">
+                <i class="fa-regular fa-envelope"></i>
+              </a>
+
+            </div>
+          `
+            )
+            .join("");
+          $studentsList.html(studentsHtml || "<p class='centered-text'>No students found</p>");
+        }
+        $modal.show();
+      }).fail(() => {
+        $studentsList.html("<p class='centered-text'>Error loading students</p>");
+        $modal.show();
+      });
+    });
+    $closeBtn.on("click", () => {
+      $modal.hide();
+    });
+
+    $(window).on("click", (e) => {
+      if (e.target == $modal[0]) {
+        $modal.hide();
+      }
+    });
+    $(document).on("click", ".course-card", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      const courseId = $(e.currentTarget).data("course");
+      const courseName = $(e.currentTarget).find(".course-title").text();
+      let videosHtml = "";
+
+      {% for video in videos %}
+        if ("{{ video.course }}" == courseId) {
+          videosHtml += `
+            <div class="video-card" data-lecture="{{ video.id }}"
+              onclick="window.open('/class?id={{video.id}}', '_blank'); event.stopPropagation();">
+              <img src="{{ video.thumbnail }}" alt="{{ video.title }}" class="video-thumbnail">
+              <div class="card-content">
+                <h6 class="video-title">{{ video.title }}</h6>
+                <p class="video-desc">{{ video.description[:26] }}...</p>
+              </div>
+            </div>`;
+        }
+      {% endfor %}
+
+      $videosList.html(videosHtml || "<p class='centered-text'>No videos available.</p>");
+      $videosHeading.text(`Lectures | ${courseName}`);
+    });
+
+    updateUI();
+  });
+</script>

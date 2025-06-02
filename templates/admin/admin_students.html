@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instructor - Manage Students</title>
+    <style>
+      body {
+        font-family: "Nunito", sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .content {
+        display: contents;
+      }
+      .container {
+        max-width: 1400px;
+        margin: 20px auto;
+      }
+      .card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+      .card-header {
+        background: #605ae9;
+        color: white;
+        padding: 15px;
+        border-radius: 8px 8px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .card-body {
+        padding: 15px;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 0;
+      }
+      .table th,
+      .table td {
+        padding: 12px;
+        text-align: left;
+      }
+      .table thead tr {
+        background: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+      }
+      .table tbody tr {
+        border-bottom: 1px solid #dee2e6;
+      }
+      .action-btn {
+        background-color: #605ae9;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin: 2px;
+      }
+      .action-btn:hover {
+        background-color: #4a47d1;
+      }
+      .status-pending {
+        color: #ffa500;
+        font-weight: bold;
+      }
+      .status-verified {
+        color: #28a745;
+        font-weight: bold;
+      }
+      .status-rejected {
+        color: #dc3545;
+        font-weight: bold;
+      }
+      .alert {
+        margin-top: 20px;
+        padding: 10px;
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+      }
+      .filter-select,
+      .search-input {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+      }
+      .text-center {
+        text-align: center;
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-users"></i> Student Management</h3>
+          <div style="display: flex; gap: 10px; align-items: center">
+            <input id="searchInput" class="search-input" type="text" placeholder="Search..." />
+            <select id="statusFilter" class="filter-select">
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="verified">Verified</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <button id="downloadCsv" class="action-btn"><i class="fas fa-file-csv"></i> CSV</button>
+            <button id="downloadPdf" class="action-btn"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button id="printTable" class="action-btn"><i class="fas fa-print"></i> Print</button>
+          </div>
+        </div>
+        <div class="card-body">
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for
+          category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+          {% endfor %} {% endif %} {% endwith %} {% if students|length > 0 %}
+          <table class="table" id="studentsTable">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Enrollment ID</th>
+                <th>Status</th>
+                <th>Registered On</th>
+                <th>Deleted At</th>
+                <th>Actions</th>
+                <th>Batch</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for student in students %}
+              <tr data-enrollment-id="{{ student[0] }}">
+                <td>{{ student[1] }}</td>
+                <td>{{ student[2] }}</td>
+                <td>{{ student[3] }}</td>
+                <td>{{ student[4] }}</td>
+                <td>{{ student[5] }}</td>
+                <td class="status-{{ student[6] }}">{{ student[6]|capitalize }}</td>
+                <td>{{ student[7].strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>{{ student[8].strftime('%Y-%m-%d %H:%M') if student[8] else '-' }}</td>
+                <td>
+                  {% if student[6] != 'verified' %}
+                  <button
+                    class="action-btn"
+                    data-action="verified"
+                    data-enrollment-id="{{ student[0] }}"
+                  >
+                    <i class="fas fa-check"></i> Verify
+                  </button>
+                  {% endif %} {% if student[6] != 'pending' %}
+                  <button
+                    class="action-btn"
+                    data-action="pending"
+                    data-enrollment-id="{{ student[0] }}"
+                  >
+                    <i class="fas fa-hourglass-half"></i> <br />Pending
+                  </button>
+                  {% endif %} {% if student[6] != 'rejected' %}
+                  <button
+                    class="action-btn"
+                    data-action="rejected"
+                    data-enrollment-id="{{ student[0] }}"
+                    style="background-color: #dc3545"
+                  >
+                    <i class="fas fa-times"></i> Reject
+                  </button>
+                  {% endif %}
+                </td>
+
+              <td>
+                {% if student[6] == 'verified' %}
+                <select class="batch-select" style="padding: 6px; border-radius: 5px; border: 1px solid #ddd;" data-enrollment-id="{{ student[5] }}"> <!-- enrollment_id is at index 5 -->
+                  <option value="">Select Batch</option>
+                  {% for batch in batches %}
+                      <option value="{{ batch[0] }}" {% if student[9] == batch[0] %}selected{% endif %}>
+                          {{ batch[1] }}
+                      </option>
+                  {% endfor %}
+              </select>
+                {% else %} - {% endif %}
+              </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <p class="text-center">No students found.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Handle status change
+        $(".action-btn").click(function () {
+          const enrollmentId = $(this).data("enrollment-id");
+          const newStatus = $(this).data("action");
+          const batchId = $(this).val();
+          const actionText =
+            newStatus === "verified"
+              ? "verify"
+              : newStatus === "pending"
+              ? "move to pending"
+              : "reject";
+
+          if (confirm(`Are you sure you want to ${actionText} this student?`)) {
+            $.ajax({
+              url: "/instructor/students",
+              method: "POST",
+              data: {
+                enrollment_id: enrollmentId,
+                status: "verified",
+                batch_id: batchId,
+                csrf_token: "{{ csrf_token }}",
+              },
+              success: function (response) {
+                if (response.success) {
+                  alert(response.message);
+                  const $row = $(`tr[data-enrollment-id="${enrollmentId}"]`);
+                  const $statusCell = $row.find(
+                    `.status-${$row.find("td:nth-child(6)").text().toLowerCase()}`
+                  );
+                  $statusCell
+                    .text(newStatus.charAt(0).toUpperCase() + newStatus.slice(1))
+                    .removeClass("status-pending status-verified status-rejected")
+                    .addClass(`status-${newStatus}`);
+
+                  $row.find("td:last").html(updateButtons(newStatus, enrollmentId));
+
+                  if (newStatus === "rejected") {
+                    $row.find("td:nth-child(8)").text(
+                      new Date().toLocaleString("en-US", {
+                        year: "numeric",
+                        month: "numeric",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    );
+                  } else {
+                    $row.find("td:nth-child(8)").text("-");
+                  }
+                } else {
+                  alert("Error: " + response.error);
+                }
+              },
+              error: function (xhr) {
+                alert("Error: " + xhr.responseText);
+              },
+            });
+          }
+        });
+
+        // Filter table (fixed)
+        $("#statusFilter").change(function () {
+          const filter = $(this).val().toLowerCase();
+          $("#studentsTable tbody tr").each(function () {
+            const status = $(this).find("td:nth-child(6)").text().toLowerCase();
+            $(this).toggle(filter === "all" || status === filter);
+          });
+        });
+
+        // Search functionality
+        $("#searchInput").on("keyup", function () {
+          const value = $(this).val().toLowerCase();
+          $("#studentsTable tbody tr").each(function () {
+            const rowText = $(this).text().toLowerCase();
+            $(this).toggle(rowText.indexOf(value) > -1);
+          });
+        });
+
+        // Row highlighting on hover
+        $("#studentsTable tbody tr").hover(
+          function () {
+            $(this).css("background-color", "#f1f1f1");
+          },
+          function () {
+            $(this).css("background-color", "");
+          }
+        );
+
+        // Export to CSV
+        $("#downloadCsv").click(function () {
+          let csv = "Username,Name,Email,Phone,Enrollment ID,Status,Registered On,Deleted At\n";
+          $("#studentsTable tbody tr:visible").each(function () {
+            const row = $(this)
+              .find("td")
+              .slice(0, 8)
+              .map(function () {
+                return $(this).text().trim();
+              })
+              .get()
+              .join(",");
+            csv += row + "\n";
+          });
+          const blob = new Blob([csv], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "students.csv";
+          a.click();
+          window.URL.revokeObjectURL(url);
+        });
+
+        // Export to PDF
+        $("#downloadPdf").click(function () {
+          const element = document.getElementById("studentsTable");
+          html2pdf()
+            .from(element)
+            .set({
+              margin: 1,
+              filename: "students.pdf",
+              html2canvas: { scale: 2 },
+              jsPDF: { orientation: "landscape" },
+            })
+            .save();
+        });
+
+        // Print table
+        $("#printTable").click(function () {
+          const printContents = document.getElementById("studentsTable").outerHTML;
+          const originalContents = document.body.innerHTML;
+          document.body.innerHTML = `<h3>Student Management</h3>${printContents}`;
+          window.print();
+          document.body.innerHTML = originalContents;
+          location.reload(); // Reload to restore event listeners
+        });
+
+        // Helper function to update buttons
+        function updateButtons(status, enrollmentId) {
+          let buttons = "";
+          if (status !== "verified") {
+            buttons += `<button class="action-btn" data-action="verified" data-enrollment-id="${enrollmentId}"><i class="fas fa-check"></i> Verify</button>`;
+          }
+          if (status !== "pending") {
+            buttons += `<button class="action-btn" data-action="pending" data-enrollment-id="${enrollmentId}"><i class="fas fa-hourglass-half"></i> To Pending</button>`;
+          }
+          if (status !== "rejected") {
+            buttons += `<button class="action-btn" data-action="rejected" data-enrollment-id="${enrollmentId}" style="background-color: #dc3545"><i class="fas fa-times"></i> Reject</button>`;
+          }
+          return buttons;
+        }
+      });
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const batchSelects = document.querySelectorAll('.batch-select');
+          
+          batchSelects.forEach(select => {
+              select.addEventListener('change', function() {
+                  const enrollmentId = this.dataset.enrollmentId;
+                  const studentName = this.dataset.studentName;
+                  const newBatchId = this.value;
+                  const currentBatchId = this.querySelector('option[selected]')?.value || '';
+      
+                  // Only prompt if the batch is actually changing
+                  if (newBatchId !== currentBatchId) {
+                      const confirmMessage = `Are you sure you want to assign ${studentName} to this batch?`;
+                      if (confirm(confirmMessage)) {
+                          // Send AJAX request to update the batch
+                          fetch('/admin/update-student-batch', {
+                              method: 'POST',
+                              headers: {
+                                  'Content-Type': 'application/x-www-form-urlencoded',
+                                  'X-CSRF-Token': '{{ csrf_token }}' // Include CSRF token
+                              },
+                              body: `enrollment_id=${encodeURIComponent(enrollmentId)}&batch_id=${encodeURIComponent(newBatchId)}`
+                          })
+                          .then(response => response.json())
+                          .then(data => {
+                              if (data.success) {
+                                  alert(data.message);
+                                  // Optionally update UI if needed
+                              } else {
+                                  alert('Error: ' + data.error);
+                                  // Revert the selection if update fails
+                                  this.value = currentBatchId;
+                              }
+                          })
+                          .catch(error => {
+                              console.error('Error:', error);
+                              alert('An error occurred while updating the batch.');
+                              this.value = currentBatchId;
+                          });
+                      } else {
+                          // Revert to the original selection if user cancels
+                          this.value = currentBatchId;
+                      }
+                  }
+              });
+          });
+      });
+      </script>
+  </body>
+</html>

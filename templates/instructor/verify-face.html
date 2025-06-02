@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Verify Face - {{ student.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+    <style>
+      #video {
+        border: 2px solid #ccc;
+        max-width: 100%;
+      }
+      #result {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Verifying Face for {{ student.name }}</h1>
+    <p>Email: {{ student.email }}</p>
+    <video id="video" autoplay muted></video>
+    <canvas id="canvas" style="display: none"></canvas>
+    <div id="result">Scanning...</div>
+
+    <script>
+      const video = document.getElementById("video");
+      const canvas = document.getElementById("canvas");
+      const context = canvas.getContext("2d");
+      const resultDiv = document.getElementById("result");
+      const csrfToken = "{{ csrf_token }}"; // CSRF Token from Flask
+      let verified = false;
+
+      // Access the user's camera
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          video.srcObject = stream;
+        })
+        .catch((err) => {
+          resultDiv.innerText = "Camera Error: " + err.message;
+          console.error("Camera access error:", err);
+        });
+
+      // Function to capture and send face data
+      function scanFace() {
+        if (!video.videoWidth || verified) return;
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = canvas.toDataURL("image/jpeg");
+
+        fetch("{{ url_for('verify_face', student_id=student.id) }}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken, // Matches Flask CSRF header config
+          },
+          body: JSON.stringify({ image: imageData }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              verified = true;
+              resultDiv.innerText = `Attendance Recorded for ${data.name} (${data.email})`;
+              // Redirect to attendance page after 2 seconds
+              setTimeout(() => {
+                window.location.href = "{{ url_for('dashboard') + '#attendance' }}";
+              }, 2000);
+            } else {
+              resultDiv.innerText = data.message || "Face not recognized, try again!";
+            }
+          })
+          .catch((err) => {
+            resultDiv.innerText = "Error: " + err.message;
+            console.error("Fetch error:", err);
+          });
+      }
+
+      // Start scanning when video is playing
+      video.addEventListener("play", () => {
+        setInterval(scanFace, 1000); // Adjusted to 1 second for better performance
+      });
+      // Change the URL in the browser without reloading
+      window.history.pushState({}, "", "/");
+    </script>
+  </body>
+</html>

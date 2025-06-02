@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduPresence</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}" />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #3f51b5;
+        --accent-color: #4caf50;
+        --bg-color: #f4f6f8;
+        --text-color: #333;
+        --radius: 8px;
+        --transition: 0.3s ease;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      header {
+        background-color: var(--primary-color);
+        color: #fff;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      header .brand {
+        font-size: 1.75rem;
+        font-weight: 700;
+      }
+
+      header nav a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius);
+        transition: background var(--transition);
+      }
+
+      header nav a:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      main {
+        flex: 1;
+        width: 100%;
+        max-width: 700px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .content {
+        display: flex;
+        gap: 1.5rem;
+      }
+
+      .left-content {
+        background: #fff;
+        border-radius: var(--radius);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        flex: 1;
+        transition: opacity var(--transition);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .content {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <img
+          src="{{ url_for('static', filename='logo.png') }}"
+          alt="E"
+          style="height: 2.6em; width: auto; vertical-align: middle"
+        />
+        <span style="font-weight: bold; margin-left: 0.3em; white-space: nowrap">
+          EduPresence
+        </span>
+      </div>
+      <nav>
+        <a href="/dashboard#batches">Home</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="content">
+        <div class="left-content" id="bcontentL"></div>
+      </div>
+    </main>
+
+    <script>
+      $(function () {
+        let previousLeftPage = "/batches";
+
+        function getUrlParameter(name) {
+          const params = new URLSearchParams(window.location.search);
+          return params.get(name);
+        }
+
+        const classId = getUrlParameter("id");
+        const defaultLeftPage = classId ? `/class-video?id=${classId}` : "/class-video";
+
+        function loadContent(page) {
+          $("#bcontentL").fadeOut(150, function () {
+            $(this)
+              .empty()
+              .load(page, function () {
+                $(this).fadeIn(150);
+                const hasClassId = new URLSearchParams(page.split("?")[1] || "").has("id");
+                $("#back-batches").toggle(hasClassId);
+              });
+          });
+        }
+
+        // Initial load
+        loadContent(defaultLeftPage);
+
+        // Back button
+        $(document).on("click", "#back-batches", function (e) {
+          e.preventDefault();
+          loadContent(previousLeftPage);
+        });
+
+        // Dynamic card clicks
+        $("#bcontentL").on("click", ".bcard-check", function () {
+          previousLeftPage = window.location.pathname + window.location.search;
+          loadContent($(this).data("page"));
+        });
+      });
+    </script>
+  </body>
+</html>

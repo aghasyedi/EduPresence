@@ -1,0 +1,132 @@
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .live-section {
+    background-color: #605ae9;
+    border-radius: 12px;
+    padding: 20px;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  .live-section h2 {
+    margin-top: 0;
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .live-section h2::before {
+    content: "🔴";
+    font-size: 20px;
+  }
+
+  .live-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-top: 10px;
+    height: calc(90vh - 190px);
+  }
+
+  .live-message {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+  }
+
+  .live-message p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .live-message strong {
+    color: #ffcc00;
+  }
+
+  .live-content::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .live-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  .live-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+
+  .live-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  .message-input-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .message-input {
+    flex-grow: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    outline: none;
+    background-color: #fff;
+  }
+
+  .send-button {
+    padding: 10px 15px;
+    background-color: #ffcc00;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .send-button:hover {
+    background-color: #e6b800;
+  }
+</style>
+
+<div class="live-section">
+  <h2>Live Section</h2>
+  <div class="live-content">
+    <div class="live-message">
+      <p><strong>User1:</strong> Great stream!</p>
+    </div>
+    <div class="live-message">
+      <p><strong>User2:</strong> Can you explain that again?</p>
+    </div>
+    <div class="live-message">
+      <p><strong>User3:</strong> Loving the content so far!</p>
+    </div>
+    <div class="live-message">
+      <p><strong>User4:</strong> Any questions about the last topic?</p>
+    </div>
+  </div>
+
+  <div class="message-input-section">
+    <input type="text" class="message-input" placeholder="Type a message..." />
+    <button class="send-button">Send</button>
+  </div>
+</div>

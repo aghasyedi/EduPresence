@@ -313,5 +313,4 @@ Key dependencies include:
 
 ## Contributors
 
-- **Agha Tasheer Syedi (21BTCSE019)**: Lead Developer, DSCS&IT, SHUATS.
-- **Er. Archana Singh**: Project Guide.
+- **Agha Tasheer Syedi (21BTCSE019)**: Lead Developer

@@ -313,4 +313,4 @@ Key dependencies include:
 
 ## Contributors
 
-- **Agha Tasheer Syedi (21BTCSE019)**: Lead Developer
+- **Agha Tasheer Syedi (21BTCSE019)**: Lead Developer [aghasyedi@gmail.com]

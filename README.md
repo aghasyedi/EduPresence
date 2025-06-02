@@ -308,6 +308,9 @@ Key dependencies include:
 - **Cloud Hosting**: Transition to AWS with connection pooling for scalability.
 - **Security Enhancements**: Implement password hashing (`bcrypt`) and multi-factor authentication.
 
+## Snapshots
+[EduPresence Snapshots.pdf](https://github.com/user-attachments/files/20544267/EduPresence.Snapshots.pdf)
+
 ## Contributors
 
 - **Agha Tasheer Syedi (21BTCSE019)**: Lead Developer, DSCS&IT, SHUATS.
